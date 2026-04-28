@@ -1,0 +1,58 @@
+AI Agent dashboard is a next js dashboard that manages AI Agent developed in n8n. The dashboard will connect and manage the workflow using n8n API.
+On dashboard admin can manage ai agents, schedule them, see the ai agent logs, update the ai agent parameter, receive daily ai agent report and more.
+
+Main Features:
+AI Agents:
+CRUD:
+Create => Full Data
+Update => Full Data 
+View => Full Data
+Delete
+
+Update: 
+Add workflow_id to ai agent table
+Adjust the ai agent form (use required column only)
+
+AI Agent detail page => /ai-agents/{id}
+AI Agent Details => Full Data
+
+on page load => get current workflow data directly using n8n api
+
+Enable/Disable AI Agents => update directly using n8n api
+Schedule => update the schedule using n8n api
+Parameters => update the parameter using n8n api
+
+History / Logs => log every ai agent action => create new table (agent logs)
+
+Daily AI Agent Report => create a new ai agent that manage reporting => read from logs => summarize => create new table
+
+Auth:
+Basic Auth (BetterAuth) => email password only
+1 user => Admin
+All pages admin only
+
+Overview Page:
+4 cards:
+Total AI Agents
+Total Active AI Agents
+Total Runs today
+Success Rate today
+
+2 tables:
+Recent runs (5 latest)
+Recent daily reports (5 latest)
+
+
+Settings => 
+Name, email, password
+Theme => Dark / Light
+///////////////////////////////
+
+Additional Features:
+Settings:
+Email Notifications => on off
+
+if email notification enabled => 
+Target Email (can be multiples email)
+Warning / Error Alerts (on off)
+Daily AI Agent Report (on off)

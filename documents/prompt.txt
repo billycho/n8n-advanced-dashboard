@@ -1,0 +1,50 @@
+Create ai agents features
+use /features/products as the guide
+
+on features/ai-agents there will be:
+components/add-ai-agent-dialog.tsx
+api.ts
+hooks.ts
+server.ts
+types.ts
+
+also add the models too: AIAgents.ts, this is the table 
+AI Agents:
+name
+description
+category
+environment (dev, staging, prod)
+webhook_url
+model (gpt-4, gpt-5)
+last_run_at TIMESTAMP
+slug (short link)
+
+also create the api on app/api: 
+ai-agents/route.ts
+
+also on all generated files add update and delete features too (currently on products there is only create and get)
+
+dont change anything, only create the ai agents features
+
+//
+update the ai agent page now
+use app/dashboard/basic-crud as the guide
+update the ai agent page on app/dashboard/ai-agents.tsx 
+
+also add create ai agent button that will display the popup from features/ai-agents/components/add-ai-agent-dialog.tsx
+also add update and delete on the table too, it will be lkie this, there will be 3 dot icon on each row if I push the 3 dot icon, there will be selection of update or delete, make it as clean as possible (natural as possible) 
+
+//
+add webhook_url (optional) to the add-ai-agent-dialog.tsx
+create ai-agents/components/view-ai-agent-dialog.tsx
+
+add detail button on each row of the table in dashboard/ai-agents/page.tsx
+when I press the detail button it will show view-ai-agennt-dialog.tsx
+
+add update button on each row of the table in dashboard/ai-agents/page.tsx
+when I press the update button it will show update-ai-agent-dialog.tsx
+
+
+
+
+

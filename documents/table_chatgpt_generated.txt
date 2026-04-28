@@ -1,0 +1,179 @@
+Here’s a clean **MongoDB collection design (table list)** based on your AI Agent dashboard requirements.
+
+I’ll keep it **simple, scalable, and production-ready** (not just demo-level).
+
+---
+
+# 🧠 1. `users`
+
+(You said only 1 admin for now, but design it properly)
+
+| Field     | Type            | Description            |
+| --------- | --------------- | ---------------------- |
+| _id       | ObjectId        | Primary key            |
+| name      | String          | Admin name             |
+| email     | String (unique) | Login email            |
+| password  | String (hashed) | Auth password          |
+| role      | String          | "admin" (future-proof) |
+| createdAt | Date            | Created timestamp      |
+| updatedAt | Date            | Updated timestamp      |
+
+---
+
+# ⚙️ 2. `settings`
+
+(Global app settings – 1 document only)
+
+| Field                     | Type     | Description         |
+| ------------------------- | -------- | ------------------- |
+| _id                       | ObjectId | Primary key         |
+| userId                    | ObjectId | Reference to users  |
+| theme                     | String   | "light" / "dark"    |
+| emailNotificationsEnabled | Boolean  | Master toggle       |
+| targetEmails              | [String] | List of emails      |
+| alertWarningsEnabled      | Boolean  | Warning alerts      |
+| alertErrorsEnabled        | Boolean  | Error alerts        |
+| dailyReportEnabled        | Boolean  | Daily report toggle |
+| createdAt                 | Date     | Created timestamp   |
+| updatedAt                 | Date     | Updated timestamp   |
+
+---
+
+# 🤖 3. `agents`
+
+(Main AI Agent config)
+
+| Field       | Type     | Description                    |
+| ----------- | -------- | ------------------------------ |
+| _id         | ObjectId | Primary key                    |
+| name        | String   | Agent name                     |
+| description | String   | Optional                       |
+| isEnabled   | Boolean  | Enable / Disable               |
+| schedule    | String   | Cron format (e.g. "0 8 * * *") |
+| parameters  | Object   | Dynamic JSON config            |
+| createdBy   | ObjectId | User reference                 |
+| createdAt   | Date     | Created timestamp              |
+| updatedAt   | Date     | Updated timestamp              |
+
+👉 Example `parameters`:
+
+```json
+{
+  "model": "gpt-4",
+  "temperature": 0.7,
+  "prompt": "Summarize today's logs"
+}
+```
+
+---
+
+# 📜 4. `agent_logs`
+
+(Execution history per run)
+
+| Field        | Type     | Description         |
+| ------------ | -------- | ------------------- |
+| _id          | ObjectId | Primary key         |
+| agentId      | ObjectId | Reference to agent  |
+| status       | String   | "success" / "error" |
+| input        | Object   | Input data          |
+| output       | Object   | Output result       |
+| errorMessage | String   | If failed           |
+| startedAt    | Date     | Start time          |
+| finishedAt   | Date     | End time            |
+| durationMs   | Number   | Execution time      |
+
+---
+
+# 📊 5. `daily_reports`
+
+(Aggregated per day)
+
+| Field          | Type     | Description          |
+| -------------- | -------- | -------------------- |
+| _id            | ObjectId | Primary key          |
+| date           | Date     | Report date          |
+| totalAgentsRun | Number   | Total runs           |
+| successCount   | Number   | Success runs         |
+| errorCount     | Number   | Error runs           |
+| summary        | String   | AI-generated summary |
+| createdAt      | Date     | Created timestamp    |
+
+---
+
+# 📨 6. `notifications`
+
+(For email + future UI alerts)
+
+| Field           | Type     | Description                    |
+| --------------- | -------- | ------------------------------ |
+| _id             | ObjectId | Primary key                    |
+| type            | String   | "warning" / "error" / "report" |
+| message         | String   | Notification message           |
+| recipientEmails | [String] | Target emails                  |
+| isSent          | Boolean  | Email sent status              |
+| relatedAgentId  | ObjectId | Optional                       |
+| createdAt       | Date     | Created timestamp              |
+
+---
+
+# 🔗 Relationships (Simple View)
+
+* `users` → owns → `agents`
+* `agents` → generates → `agent_logs`
+* `agent_logs` → aggregated → `daily_reports`
+* `settings` → controls → notifications
+* `notifications` → triggered by → logs / reports
+
+---
+
+# 🧠 Design Notes (Important)
+
+### 1. Why `parameters` is flexible JSON
+
+Because:
+
+* Each AI agent can have different configs
+* You avoid schema changes later
+* Perfect for AI systems
+
+---
+
+### 2. Why separate `logs` and `reports`
+
+* Logs = raw data (every run)
+* Reports = summarized (daily insight)
+
+👉 This is how real AI systems scale
+
+---
+
+### 3. Why `schedule` is string (cron)
+
+Simple and powerful:
+
+* `"0 * * * *"` → every hour
+* `"0 8 * * *"` → every day at 8 AM
+
+---
+
+### 4. Why `notifications` is separate
+
+So later you can:
+
+* Add UI notifications 🔔
+* Retry failed emails
+* Track history
+
+---
+
+# 🚀 If you want next step
+
+I can generate for you:
+
+* Mongoose schemas (ready to paste)
+* API routes (Next.js)
+* Cron job runner for agents
+* AI execution flow (very important part)
+
+Just tell me 👍

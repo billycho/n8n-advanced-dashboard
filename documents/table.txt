@@ -1,0 +1,13 @@
+AI Agents:
+name
+description
+category
+environment (dev, staging, prod)
+webhook_url
+model (gpt-4, gpt-5)
+last_run_at TIMESTAMP
+slug (short link)
+
+////////////////////////////////
+update:
+workflow_id string
