@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Home, Users, BarChart3, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import SignOutButton from "@/components/sign-out-btn"
 
 export default function DashboardLayout({
   children,
@@ -48,6 +49,8 @@ export default function DashboardLayout({
               Dashboard Var 1 (Dev)
             </Button>
           </Link>
+
+          <SignOutButton />
         </nav>
       </aside>
 
