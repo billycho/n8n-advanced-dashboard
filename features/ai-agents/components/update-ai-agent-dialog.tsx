@@ -89,6 +89,15 @@ export function UpdateAIAgentDialog({
           </div>
 
           <div className="space-y-2">
+            <Label>Workflow ID</Label>
+            <Input
+              placeholder="Enter workflow id"
+              value={formData.workflow_id || ""}
+              onChange={(e) => setFormData({ ...formData, workflow_id: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label>Webhook URL (Optional)</Label>
             <Input
               placeholder="Enter webhook url"

@@ -1,0 +1,11 @@
+update model:
+Cores:
+C:\Users\billy\nextprojects\ai-agents-dashboard\models\AIAgent.ts
+C:\Users\billy\nextprojects\ai-agents-dashboard\app\api\ai-agents\route.ts
+C:\Users\billy\nextprojects\ai-agents-dashboard\features\ai-agents\server.ts
+C:\Users\billy\nextprojects\ai-agents-dashboard\features\ai-agents\types.ts
+
+Features:
+C:\Users\billy\nextprojects\ai-agents-dashboard\features\ai-agents\components\add-ai-agent-dialog.tsx
+C:\Users\billy\nextprojects\ai-agents-dashboard\features\ai-agents\components\update-ai-agent-dialog.tsx
+

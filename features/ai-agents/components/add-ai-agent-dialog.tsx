@@ -20,7 +20,7 @@ export function AddAIAgentDialog() {
   const { mutate: createAgent, isPending } = useCreateAIAgent()
 
   const handleSubmit = () => {
-    if (formData.name && formData.slug) {
+    if (formData.name) {
       createAgent(formData as AIAgent, {
         onSuccess: () => {
           setOpen(false)
@@ -28,7 +28,7 @@ export function AddAIAgentDialog() {
         }
       })
     } else {
-      alert("Name and Slug are required")
+      alert("Name is required")
     }
   }
 
@@ -53,16 +53,26 @@ export function AddAIAgentDialog() {
             />
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label>Description</Label>
             <Input 
               placeholder="Enter description" 
               value={formData.description || ""}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
+          </div> */}
+
+            <div className="space-y-2">
+            <Label>Workflow ID</Label>
+            <Input 
+              placeholder="Enter workflow id" 
+              value={formData.workflow_id || ""}
+              onChange={(e) => setFormData({ ...formData, workflow_id: e.target.value })}
+            />
           </div>
 
-          <div className="space-y-2">
+
+          {/* <div className="space-y-2">
             <Label>Category</Label>
             <Input 
               placeholder="Enter category" 
@@ -78,16 +88,17 @@ export function AddAIAgentDialog() {
               value={formData.slug || ""}
               onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
             />
-          </div>
+          </div> */}
 
-          <div className="space-y-2">
+           
+          {/* <div className="space-y-2">
             <Label>Webhook URL (Optional)</Label>
             <Input 
               placeholder="Enter webhook url" 
               value={formData.webhook_url || ""}
               onChange={(e) => setFormData({ ...formData, webhook_url: e.target.value })}
             />
-          </div>
+          </div> */}
 
           <Button className="w-full" onClick={handleSubmit} disabled={isPending}>
             {isPending ? "Submitting..." : "Submit"}

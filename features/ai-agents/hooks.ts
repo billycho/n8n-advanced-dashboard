@@ -1,10 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAIAgents, createAIAgent, updateAIAgent, deleteAIAgent } from "./api";
+import { getAIAgents, getAIAgent, createAIAgent, updateAIAgent, deleteAIAgent } from "./api";
 
 export function useAIAgents() {
   return useQuery({
     queryKey: ["ai-agents"],
     queryFn: getAIAgents,
+  });
+}
+
+export function useAIAgent(id: string) {
+  return useQuery({
+    queryKey: ["ai-agents", id],
+    queryFn: () => getAIAgent(id),
+    enabled: !!id,
   });
 }
 

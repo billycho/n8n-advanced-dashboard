@@ -22,6 +22,7 @@ export async function POST(req: Request) {
       category: body.category,
       environment: body.environment,
       webhook_url: body.webhook_url,
+      workflow_id: body.workflow_id,
       model: body.model,
       slug: body.slug,
     });

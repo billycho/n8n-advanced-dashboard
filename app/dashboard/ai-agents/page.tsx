@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAIAgents, useDeleteAIAgent } from "@/features/ai-agents/hooks";
 import type { AIAgent } from "@/features/ai-agents/types";
 import { AddAIAgentDialog } from "@/features/ai-agents/components/add-ai-agent-dialog";
 import { UpdateAIAgentDialog } from "@/features/ai-agents/components/update-ai-agent-dialog";
-import { ViewAIAgentDialog } from "@/features/ai-agents/components/view-ai-agent-dialog";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/card";
 
 export default function AIAgentsPage() {
+  const router = useRouter();
   const [editingAgent, setEditingAgent] = useState<AIAgent | null>(null);
-  const [viewingAgent, setViewingAgent] = useState<AIAgent | null>(null);
 
   const { data: agents = [], isLoading } = useAIAgents();
   const { mutate: deleteAgent } = useDeleteAIAgent();
@@ -41,9 +41,9 @@ export default function AIAgentsPage() {
   const handleEdit = (agent: AIAgent) => {
     setEditingAgent(agent);
   };
-  
+
   const handleView = (agent: AIAgent) => {
-    setViewingAgent(agent);
+    router.push(`/dashboard/ai-agents/${agent._id}`);
   };
 
   return (
@@ -69,80 +69,83 @@ export default function AIAgentsPage() {
             <p>Loading...</p>
           ) : (
             <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Environment</TableHead>
-                  <TableHead>Model</TableHead>
-                  <TableHead className="w-[150px] text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
+  <TableHeader>
+    <TableRow>
+      <TableHead className="w-[20%] whitespace-nowrap truncate">ID</TableHead>
+      <TableHead>Name</TableHead>
+      {/* <TableHead className="w-[25px] text-right">Actions</TableHead> */}
+    </TableRow>
+  </TableHeader>
 
-              <TableBody>
-                {agents.map((agent) => (
-                  <TableRow key={agent._id}>
-                    <TableCell className="max-w-[150px] truncate">{agent._id}</TableCell>
-                    <TableCell>{agent.name}</TableCell>
-                    <TableCell>{agent.category || "-"}</TableCell>
-                    <TableCell>{agent.environment || "-"}</TableCell>
-                    <TableCell>{agent.model || "-"}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleView(agent)}
-                          title="Detail"
-                        >
-                          <Eye className="h-4 w-4 text-blue-500" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleEdit(agent)}
-                          title="Update"
-                        >
-                          <Pencil className="h-4 w-4 text-green-500" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleDelete(agent._id as string)}
-                          title="Delete"
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                
-                {agents.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground py-6">
-                      No AI agents found. Create one to get started.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+  <TableBody>
+    {agents.map((agent) => (
+      <TableRow
+        key={agent._id}
+        onClick={() => handleView(agent)}
+        className="group cursor-pointer hover:bg-muted/50 transition-colors"
+      >
+        <TableCell className="w-[20%] whitespace-nowrap truncate">
+          {agent._id}
+        </TableCell>
+
+        <TableCell>{agent.name}</TableCell>
+
+        <TableCell className="text-right">
+          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+
+            {/* VIEW */}
+            <Button
+              variant="ghost"
+              size="icon"
+              title="Detail"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleView(agent);
+              }}
+            >
+              <Eye className="h-4 w-4 text-blue-500" />
+            </Button>
+
+            {/* EDIT */}
+            <Button
+              variant="ghost"
+              size="icon"
+              title="Update"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEdit(agent);
+              }}
+            >
+              <Pencil className="h-4 w-4 text-green-500" />
+            </Button>
+
+          </div>
+        </TableCell>
+      </TableRow>
+    ))}
+
+    {agents.length === 0 && (
+      <TableRow>
+        <TableCell
+          colSpan={3}
+          className="text-center text-muted-foreground py-6"
+        >
+          No AI agents found. Create one to get started.
+        </TableCell>
+      </TableRow>
+    )}
+  </TableBody>
+</Table>
           )}
         </CardContent>
       </Card>
 
-      <UpdateAIAgentDialog 
-        agent={editingAgent} 
-        open={!!editingAgent} 
-        onOpenChange={(open) => !open && setEditingAgent(null)} 
+      <UpdateAIAgentDialog
+        agent={editingAgent}
+        open={!!editingAgent}
+        onOpenChange={(open) => !open && setEditingAgent(null)}
       />
-      
-      <ViewAIAgentDialog
-        agent={viewingAgent}
-        open={!!viewingAgent}
-        onOpenChange={(open) => !open && setViewingAgent(null)}
-      />
+
     </div>
   );
 }

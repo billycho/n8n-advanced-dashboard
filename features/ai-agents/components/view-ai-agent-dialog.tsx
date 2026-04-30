@@ -62,7 +62,10 @@ export function ViewAIAgentDialog({
             <Label className="text-right text-muted-foreground">Slug</Label>
             <div className="col-span-2">{agent.slug || "-"}</div>
           </div>
-
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label className="text-right text-muted-foreground">Workflow ID</Label>
+            <div className="col-span-2 break-all">{agent.workflow_id || "-"}</div>
+          </div>
           <div className="grid grid-cols-3 items-center gap-4">
             <Label className="text-right text-muted-foreground">Webhook URL</Label>
             <div className="col-span-2 break-all">{agent.webhook_url || "-"}</div>

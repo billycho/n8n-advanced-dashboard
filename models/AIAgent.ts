@@ -17,6 +17,9 @@ const AIAgentSchema = new mongoose.Schema(
       enum: ["dev", "staging", "prod"],
       default: "dev",
     },
+    workflow_id: {
+      type: String,
+    },
     webhook_url: {
       type: String,
     },
@@ -28,8 +31,6 @@ const AIAgentSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      unique: true,
-      required: true,
     },
   },
   {

@@ -19,6 +19,7 @@ export async function createAIAgentInDB(data: AIAgentType) {
     category: data.category,
     environment: data.environment,
     webhook_url: data.webhook_url,
+    workflow_id: data.workflow_id,
     model: data.model,
     slug: data.slug,
   });

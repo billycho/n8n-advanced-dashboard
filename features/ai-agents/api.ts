@@ -7,6 +7,12 @@ export async function getAIAgents(): Promise<AIAgent[]> {
   return res.json();
 }
 
+export async function getAIAgent(id: string): Promise<AIAgent> {
+  console.log(`${API_URL}/api/ai-agents/${id}`);
+  const res = await fetch(`${API_URL}/api/ai-agents/${id}`);
+  return res.json();
+}
+
 export async function createAIAgent(data: AIAgent) {
   const res = await fetch(`${API_URL}/api/ai-agents`, {
     method: "POST",

@@ -45,6 +45,37 @@ add update button on each row of the table in dashboard/ai-agents/page.tsx
 when I press the update button it will show update-ai-agent-dialog.tsx
 
 
+//
+create a new page on dashboard/ai-agents 
+the url will be 
+dashboard/ai-agents/{id}
+the id is the ai agent id
+
+on this new page:
+display the ai agents information all of them also with functional update and delete button (all of them will be popup that use @root/features/ai-agents/components/)
+
+
+on ai agent table on ai-agents/page.tsx
+ <TableRow
+        key={agent._id}
+        onClick={() => handleView(agent)}
+onclick will redirect to dashboard/ai-agents/{id}
+
+//
+
+on this page:
+dashboard/ai-agents/{id}
+
+below the ai agent detail
+create n8n workflow details UI (functional UI only)
+the info is
+Status (Enabled or disabled), if disable create a button to enable it that will popup confirmation, same with if its enabled, create button to disable it and popup confirmation too
+Schedule time => create popup to edit the schedule time
+
+Below the n8n workflow details UI
+create the n8n workflow parameters where user can do CRUD on the parameter (for testing purpose just use local storage)
+
+
 
 
 
