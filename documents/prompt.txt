@@ -69,13 +69,92 @@ dashboard/ai-agents/{id}
 below the ai agent detail
 create n8n workflow details UI (functional UI only)
 the info is
-Status (Enabled or disabled), if disable create a button to enable it that will popup confirmation, same with if its enabled, create button to disable it and popup confirmation too
-Schedule time => create popup to edit the schedule time
+Workflow Status (Enabled or disabled), if disable create a button to enable it that will popup confirmation, same with if its enabled, create button to disable it and popup confirmation too
+Workflow Schedule time => create popup to edit the schedule time
 
 Below the n8n workflow details UI
 create the n8n workflow parameters where user can do CRUD on the parameter (for testing purpose just use local storage)
 
 
+//
+on app\dashboard\ai-agents\[id]\page.tsx
+connect the n8n workflow settings and the parameter to this API
+https://n8n.nodemationhub.com/api/v1/workflows/pBFu271nBy82vsKS?excludePinnedData=true
+replace pBFu271nBy82vsKS with the n8n workflow id on the page, we will use this workflow id to fetch and update workflow data from the API
+the header for this api is => X-N8N-API-KEY
+the value of the X-N8N-API-KEY is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4Nzc2ZDYyNS05NjhjLTRkYTctODRmMy1hZWQ0YTE0NzI2YmIiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzc3NTE0MTI4fQ.LKHG98_MZNFT6s4ct7ESLmugeBaRw3Bk5Gr6Fl52HxM
 
+the response structure is:
+documents\workflow_api_response.json
 
+also create the workflow folder based on features\ai-agents
+so the folder will be features\workflows
+on workflow folder there will be 
+components
+api.ts this one use external API https://n8n.nodemationhub.com/api/v1/workflows/pBFu271nBy82vsKS?excludePinnedData=true
+hooks.ts
+types.ts
+
+no need for server.ts since we connect to external APO
+
+on app\dashboard\ai-agents\[id]\page.tsx, we will use files from features\workflows similar with how the page.tsx use features\ai-agents
+
+focus on fetching the data first (the correct parameter and stuff)
+for the workflow status we get from (file is documents\workflow_api_response.json)
+    "active": true
+
+for parameter we get from 
+{
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "08ac7fdb-bdcd-4212-a054-784bb11c3bc6",
+                            "name": "param1",
+                            "value": "test 1",
+                            "type": "string"
+                        },
+                        {
+                            "id": "b036f549-52b7-402c-b3c8-61f0eab8df3d",
+                            "name": "param2",
+                            "value": "test 2",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                160,
+                -48
+            ],
+            "id": "817f0280-b94c-4758-917b-48d51f9049e6",
+            "name": "Set Data"
+        }
+
+schedule is from
+{
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "cronExpression",
+                            "expression": "1 1 * * *"
+                        }
+                    ]
+                }
+            },
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.3,
+            "position": [
+                -160,
+                112
+            ],
+            "id": "587c37a8-1365-4c68-b644-21c0613f1ea0",
+            "name": "Schedule Trigger"
+        },
+
+Basically we only need to edit the cron expression (on the page we also directly edit the cronexpression)
 
