@@ -2,14 +2,23 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getN8NWorkflow, updateN8NWorkflow } from "./api";
 import { N8NWorkflow, WorkflowAssignment, WorkflowInterval } from "./types";
 
-export function useN8NWorkflow(id: string) {
+type UseN8NWorkflowOptions = {
+  enabled?: boolean;
+};
+
+export function useN8NWorkflow(
+  id: string,
+  options?: UseN8NWorkflowOptions
+) {
+  console.log("Fetching workflow with ID:", id);
   return useQuery({
     queryKey: ["n8n-workflow", id],
     queryFn: () => getN8NWorkflow(id),
-    enabled: !!id,
+
+    // allow override, fallback to default behavior
+    enabled: options?.enabled ?? !!id,
   });
 }
-
 export function useUpdateN8NWorkflow() {
   const queryClient = useQueryClient();
 

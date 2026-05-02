@@ -9,8 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { 
-  ArrowLeft, Pencil, Trash2, Calendar, Globe, Cpu, Hash, Link2, Box, 
+import {
+  ArrowLeft, Pencil, Trash2, Calendar, Globe, Cpu, Hash, Link2, Box,
   Play, Pause, Settings, Plus, AlertCircle, Clock, Database
 } from "lucide-react";
 import {
@@ -32,6 +32,8 @@ import {
 import { useEffect } from "react";
 import { toast } from "sonner";
 
+import { useN8NWorkflow, useUpdateN8NWorkflow, extractWorkflowData } from "@/features/workflows/hooks";
+
 export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -47,11 +49,19 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
   const [tempSchedule, setTempSchedule] = useState("09:00");
 
   // n8n Parameters State
-  const [parameters, setParameters] = useState<{ id: string; key: string; value: string }[]>([]);
+  const [parameters, setParameters] = useState<{ id: string; name: string; value: string; type: string }[]>([]);
   const [isParamDialogOpen, setIsParamDialogOpen] = useState(false);
-  const [editingParam, setEditingParam] = useState<{ id: string; key: string; value: string } | null>(null);
+  const [editingParam, setEditingParam] = useState<{ id: string; name: string; value: string; type: string } | null>(null);
   const [paramKey, setParamKey] = useState("");
   const [paramValue, setParamValue] = useState("");
+
+
+  const { data: workflow, isLoading: isWorkflowLoading } = useN8NWorkflow(
+    agent?.workflow_id ?? "",
+    {
+      enabled: !!agent?.workflow_id,
+    }
+  );
 
   // Load parameters from localStorage
   useEffect(() => {
@@ -61,8 +71,26 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
     }
   }, [id]);
 
+  // useEffect(() => {
+  //   console.log("asdadasdad");
+  //   if (!isLoading && agent) {
+  //     console.log("agent name:", agent.name);
+  //   }
+  // }, [isLoading, agent]);
+
+  useEffect(() => {
+    if (workflow) {
+      console.log("Workflow data:", workflow);
+      const data = extractWorkflowData(workflow);
+      setWorkflowEnabled(data.active);
+      setScheduleTime(data.cronExpression);
+      console.log("Extracted parameters from workflow:", data.parameters);
+      setParameters(data.parameters);
+    }
+  }, [workflow]);
+
   // Save parameters to localStorage
-  const saveParameters = (newParams: { id: string; key: string; value: string }[]) => {
+  const saveParameters = (newParams: { id: string; name: string; value: string; type: string  }[]) => {
     setParameters(newParams);
     localStorage.setItem(`n8n_params_${id}`, JSON.stringify(newParams));
   };
@@ -90,7 +118,7 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
       saveParameters(newParams);
       toast.success("Parameter updated");
     } else {
-      const newParam = { id: Math.random().toString(36).substr(2, 9), key: paramKey, value: paramValue };
+      const newParam = { id: Math.random().toString(36).substr(2, 9), name: paramKey, value: paramValue, type: "string" };
       saveParameters([...parameters, newParam]);
       toast.success("Parameter added");
     }
@@ -107,9 +135,9 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
     toast.success("Parameter deleted");
   };
 
-  const openEditParam = (param: { id: string; key: string; value: string }) => {
+   const openEditParam = (param: { id: string; name: string; value: string; type: string }) => {
     setEditingParam(param);
-    setParamKey(param.key);
+    setParamKey(param.name);
     setParamValue(param.value);
     setIsParamDialogOpen(true);
   };
@@ -302,8 +330,8 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
                 <p className="text-sm text-muted-foreground">The workflow is currently {workflowEnabled ? "running on schedule" : "paused"}</p>
               </div>
             </div>
-            <Button 
-              variant={workflowEnabled ? "outline" : "default"} 
+            <Button
+              variant={workflowEnabled ? "outline" : "default"}
               className="gap-2"
               onClick={() => setIsStatusConfirmOpen(true)}
             >
@@ -324,8 +352,8 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
                 <p className="text-sm text-muted-foreground">Runs every day at <span className="font-mono font-bold text-primary">{scheduleTime}</span></p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="gap-2"
               onClick={() => {
                 setTempSchedule(scheduleTime);
@@ -370,7 +398,7 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
                 {parameters.length > 0 ? (
                   parameters.map((param) => (
                     <TableRow key={param.id} className="group">
-                      <TableCell className="font-mono text-sm">{param.key}</TableCell>
+                      <TableCell className="font-mono text-sm">{param.name}</TableCell>
                       <TableCell className="text-sm">{param.value}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
@@ -398,7 +426,7 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
       </Card>
 
       {/* Dialogs */}
-      
+
       {/* Status Toggle Confirmation */}
       <Dialog open={isStatusConfirmOpen} onOpenChange={setIsStatusConfirmOpen}>
         <DialogContent>
@@ -424,15 +452,14 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
           <DialogHeader>
             <DialogTitle>Edit Schedule</DialogTitle>
             <DialogDescription>
-              Set the time for the daily workflow execution.
+              Set the cron expression for the daily workflow execution.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="time" className="text-right">Time</Label>
+              <Label htmlFor="cron" className="text-right">Cron Expression</Label>
               <Input
-                id="time"
-                type="time"
+                id="cron"
                 value={tempSchedule}
                 onChange={(e) => setTempSchedule(e.target.value)}
                 className="col-span-3"
