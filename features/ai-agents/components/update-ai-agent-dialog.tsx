@@ -97,14 +97,14 @@ export function UpdateAIAgentDialog({
             />
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label>Webhook URL (Optional)</Label>
             <Input
               placeholder="Enter webhook url"
               value={formData.webhook_url || ""}
               onChange={(e) => setFormData({ ...formData, webhook_url: e.target.value })}
             />
-          </div>
+          </div> */}
 
           <Button className="w-full" onClick={handleSubmit} disabled={isPending}>
             {isPending ? "Updating..." : "Update"}

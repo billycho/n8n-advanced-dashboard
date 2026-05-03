@@ -33,6 +33,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 import { useN8NWorkflow, useUpdateN8NWorkflow, extractWorkflowData } from "@/features/workflows/hooks";
+import cronstrue from "cronstrue";
 
 export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -43,17 +44,18 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
 
   // n8n Workflow State
   const [workflowEnabled, setWorkflowEnabled] = useState(true);
-  const [isStatusConfirmOpen, setIsStatusConfirmOpen] = useState(false);
+  // const [isStatusConfirmOpen, setIsStatusConfirmOpen] = useState(false);
   const [scheduleTime, setScheduleTime] = useState("09:00");
-  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
-  const [tempSchedule, setTempSchedule] = useState("09:00");
+  // const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
+  // const [tempSchedule, setTempSchedule] = useState("09:00");
 
   // n8n Parameters State
   const [parameters, setParameters] = useState<{ id: string; name: string; value: string; type: string }[]>([]);
-  const [isParamDialogOpen, setIsParamDialogOpen] = useState(false);
-  const [editingParam, setEditingParam] = useState<{ id: string; name: string; value: string; type: string } | null>(null);
-  const [paramKey, setParamKey] = useState("");
-  const [paramValue, setParamValue] = useState("");
+  // const [isParamDialogOpen, setIsParamDialogOpen] = useState(false);
+  // const [editingParam, setEditingParam] = useState<{ id: string; name: string; value: string; type: string } | null>(null);
+  // const [paramKey, setParamKey] = useState("");
+  // const [paramValue, setParamValue] = useState("");
+  const [selectedParam, setSelectedParam] = useState<{ name: string; value: string } | null>(null);
 
 
   const { data: workflow, isLoading: isWorkflowLoading } = useN8NWorkflow(
@@ -90,57 +92,57 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
   }, [workflow]);
 
   // Save parameters to localStorage
-  const saveParameters = (newParams: { id: string; name: string; value: string; type: string  }[]) => {
+  const saveParameters = (newParams: { id: string; name: string; value: string; type: string }[]) => {
     setParameters(newParams);
     localStorage.setItem(`n8n_params_${id}`, JSON.stringify(newParams));
   };
 
-  const handleToggleStatus = () => {
-    setWorkflowEnabled(!workflowEnabled);
-    setIsStatusConfirmOpen(false);
-    toast.success(`Workflow ${!workflowEnabled ? "enabled" : "disabled"} successfully`);
-  };
+  // const handleToggleStatus = () => {
+  //   setWorkflowEnabled(!workflowEnabled);
+  //   setIsStatusConfirmOpen(false);
+  //   toast.success(`Workflow ${!workflowEnabled ? "enabled" : "disabled"} successfully`);
+  // };
 
-  const handleUpdateSchedule = () => {
-    setScheduleTime(tempSchedule);
-    setIsScheduleDialogOpen(false);
-    toast.success("Schedule updated successfully");
-  };
+  // const handleUpdateSchedule = () => {
+  //   setScheduleTime(tempSchedule);
+  //   setIsScheduleDialogOpen(false);
+  //   toast.success("Schedule updated successfully");
+  // };
 
-  const handleAddParam = () => {
-    if (!paramKey || !paramValue) {
-      toast.error("Please fill in both key and value");
-      return;
-    }
+  // const handleAddParam = () => {
+  //   if (!paramKey || !paramValue) {
+  //     toast.error("Please fill in both key and value");
+  //     return;
+  //   }
 
-    if (editingParam) {
-      const newParams = parameters.map(p => p.id === editingParam.id ? { ...p, key: paramKey, value: paramValue } : p);
-      saveParameters(newParams);
-      toast.success("Parameter updated");
-    } else {
-      const newParam = { id: Math.random().toString(36).substr(2, 9), name: paramKey, value: paramValue, type: "string" };
-      saveParameters([...parameters, newParam]);
-      toast.success("Parameter added");
-    }
+  //   if (editingParam) {
+  //     const newParams = parameters.map(p => p.id === editingParam.id ? { ...p, key: paramKey, value: paramValue } : p);
+  //     saveParameters(newParams);
+  //     toast.success("Parameter updated");
+  //   } else {
+  //     const newParam = { id: Math.random().toString(36).substr(2, 9), name: paramKey, value: paramValue, type: "string" };
+  //     saveParameters([...parameters, newParam]);
+  //     toast.success("Parameter added");
+  //   }
 
-    setIsParamDialogOpen(false);
-    setEditingParam(null);
-    setParamKey("");
-    setParamValue("");
-  };
+  //   setIsParamDialogOpen(false);
+  //   setEditingParam(null);
+  //   setParamKey("");
+  //   setParamValue("");
+  // };
 
-  const handleDeleteParam = (paramId: string) => {
-    const newParams = parameters.filter(p => p.id !== paramId);
-    saveParameters(newParams);
-    toast.success("Parameter deleted");
-  };
+  // const handleDeleteParam = (paramId: string) => {
+  //   const newParams = parameters.filter(p => p.id !== paramId);
+  //   saveParameters(newParams);
+  //   toast.success("Parameter deleted");
+  // };
 
-   const openEditParam = (param: { id: string; name: string; value: string; type: string }) => {
-    setEditingParam(param);
-    setParamKey(param.name);
-    setParamValue(param.value);
-    setIsParamDialogOpen(true);
-  };
+  //  const openEditParam = (param: { id: string; name: string; value: string; type: string }) => {
+  //   setEditingParam(param);
+  //   setParamKey(param.name);
+  //   setParamValue(param.value);
+  //   setIsParamDialogOpen(true);
+  // };
 
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this AI Agent?")) {
@@ -255,14 +257,14 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                   <Link2 className="h-3 w-3" /> Webhook URL
                 </Label>
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50 font-mono text-sm border border-secondary">
                   {agent.webhook_url || "No webhook URL configured"}
                 </div>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>
@@ -307,6 +309,7 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
       </div>
 
       {/* n8n Workflow Details Section */}
+
       <Card className="shadow-md border-primary/10">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -315,7 +318,33 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
           <CardDescription>Manage the automation workflow for this agent</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted">
+          <a
+            href={`https://n8n.nodemationhub.com/workflow/${agent.workflow_id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group cursor-pointer"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-full bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                <Settings className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-lg">n8n Workflow Editor</span>
+                </div>
+                <p className="text-sm font-mono text-muted-foreground truncate max-w-[200px] sm:max-w-md">
+                  https://n8n.nodemationhub.com/workflow/{agent.workflow_id}
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              className="gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+            >
+              <Link2 className="h-4 w-4" /> Open Editor
+            </Button>
+          </a>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group">
             <div className="flex items-center gap-4">
               <div className={`p-3 rounded-full ${workflowEnabled ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"}`}>
                 {workflowEnabled ? <Play className="h-6 w-6" /> : <Pause className="h-6 w-6" />}
@@ -330,17 +359,17 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
                 <p className="text-sm text-muted-foreground">The workflow is currently {workflowEnabled ? "running on schedule" : "paused"}</p>
               </div>
             </div>
-            <Button
+            {/* <Button
               variant={workflowEnabled ? "outline" : "default"}
               className="gap-2"
               onClick={() => setIsStatusConfirmOpen(true)}
             >
               {workflowEnabled ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
               {workflowEnabled ? "Disable Workflow" : "Enable Workflow"}
-            </Button>
+            </Button> */}
           </div>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-full bg-blue-500/10 text-blue-600">
                 <Clock className="h-6 w-6" />
@@ -349,10 +378,18 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-lg">Schedule Time</span>
                 </div>
-                <p className="text-sm text-muted-foreground">Runs every day at <span className="font-mono font-bold text-primary">{scheduleTime}</span></p>
+                <p className="text-sm text-muted-foreground">
+                  {(() => {
+                    try {
+                      return cronstrue.toString(scheduleTime);
+                    } catch (e) {
+                      return `Runs on schedule: ${scheduleTime}`;
+                    }
+                  })()}
+                </p>
               </div>
             </div>
-            <Button
+            {/* <Button
               variant="outline"
               className="gap-2"
               onClick={() => {
@@ -361,8 +398,10 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
               }}
             >
               <Pencil className="h-4 w-4" /> Change Schedule
-            </Button>
+            </Button> */}
           </div>
+
+
         </CardContent>
       </Card>
 
@@ -375,40 +414,38 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
             </CardTitle>
             <CardDescription>Custom variables passed to the n8n execution environment</CardDescription>
           </div>
-          <Button size="sm" className="gap-2" onClick={() => {
+          {/* <Button size="sm" className="gap-2" onClick={() => {
             setEditingParam(null);
             setParamKey("");
             setParamValue("");
             setIsParamDialogOpen(true);
           }}>
             <Plus className="h-4 w-4" /> Add Parameter
-          </Button>
+          </Button> */}
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead className="font-bold">Key</TableHead>
+                  <TableHead className="w-[20%] font-bold" >Key</TableHead>
                   <TableHead className="font-bold">Value</TableHead>
-                  <TableHead className="w-[100px] text-right">Actions</TableHead>
+                  {/* <TableHead className="w-[100px] text-right">Actions</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {parameters.length > 0 ? (
-                  parameters.map((param) => (
-                    <TableRow key={param.id} className="group">
-                      <TableCell className="font-mono text-sm">{param.name}</TableCell>
-                      <TableCell className="text-sm">{param.value}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => openEditParam(param)}>
-                            <Pencil className="h-4 w-4 text-blue-500" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDeleteParam(param.id)}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </div>
+                  parameters.map((param, i) => (
+                    <TableRow
+                      key={i}
+                      className="group cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => setSelectedParam(param)}
+                    >
+                      <TableCell className="w-[20%] font-mono text-sm max-w-[200px] truncate" title={param.name}>
+                        {param.name}
+                      </TableCell>
+                      <TableCell className="text-sm max-w-[300px] truncate text-muted-foreground" title={param.value}>
+                        {param.value}
                       </TableCell>
                     </TableRow>
                   ))
@@ -427,89 +464,42 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
 
       {/* Dialogs */}
 
-      {/* Status Toggle Confirmation */}
-      <Dialog open={isStatusConfirmOpen} onOpenChange={setIsStatusConfirmOpen}>
-        <DialogContent>
+      {/* Parameter Detail Dialog */}
+      <Dialog open={!!selectedParam} onOpenChange={(open) => !open && setSelectedParam(null)}>
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Confirm Action</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5 text-primary" /> Parameter Details
+            </DialogTitle>
             <DialogDescription>
-              Are you sure you want to {workflowEnabled ? "disable" : "enable"} the n8n workflow for this agent?
-              {workflowEnabled && " This will stop all automated tasks associated with this agent."}
+              View the key and value for this workflow parameter.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsStatusConfirmOpen(false)}>Cancel</Button>
-            <Button variant={workflowEnabled ? "destructive" : "default"} onClick={handleToggleStatus}>
-              {workflowEnabled ? "Disable Workflow" : "Enable Workflow"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Schedule Edit Dialog */}
-      <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Schedule</DialogTitle>
-            <DialogDescription>
-              Set the cron expression for the daily workflow execution.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="cron" className="text-right">Cron Expression</Label>
-              <Input
-                id="cron"
-                value={tempSchedule}
-                onChange={(e) => setTempSchedule(e.target.value)}
-                className="col-span-3"
+          <div className="grid gap-6 py-4">
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Key</Label>
+              <div className="p-3 rounded-md bg-muted font-mono text-sm break-all border border-muted">
+                {selectedParam?.name}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Value</Label>
+              <textarea
+                value={selectedParam?.value || ""}
+                readOnly
+                className="flex min-h-[200px] w-full rounded-md border border-muted bg-muted/30 px-3 py-2 text-sm font-mono focus-visible:outline-none focus-visible:ring-0 cursor-pointer resize-none active:bg-muted/50 transition-colors"
+                onClick={() => {
+                  if (selectedParam?.value) {
+                    navigator.clipboard.writeText(selectedParam.value);
+                    toast.success("Value copied to clipboard");
+                  }
+                }}
               />
+              <p className="text-[10px] text-muted-foreground italic">Click the text box above to copy the value to your clipboard</p>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsScheduleDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleUpdateSchedule}>Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Parameter Add/Edit Dialog */}
-      <Dialog open={isParamDialogOpen} onOpenChange={setIsParamDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{editingParam ? "Edit Parameter" : "Add New Parameter"}</DialogTitle>
-            <DialogDescription>
-              Define a key-value pair for the workflow environment.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="key" className="text-right text-xs font-bold uppercase">Key</Label>
-              <Input
-                id="key"
-                value={paramKey}
-                onChange={(e) => setParamKey(e.target.value)}
-                placeholder="e.g. API_KEY"
-                className="col-span-3 font-mono"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="value" className="text-right text-xs font-bold uppercase">Value</Label>
-              <Input
-                id="value"
-                value={paramValue}
-                onChange={(e) => setParamValue(e.target.value)}
-                placeholder="e.g. secret-token"
-                className="col-span-3"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setIsParamDialogOpen(false);
-              setEditingParam(null);
-            }}>Cancel</Button>
-            <Button onClick={handleAddParam}>{editingParam ? "Update" : "Add"}</Button>
+            <Button onClick={() => setSelectedParam(null)}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
