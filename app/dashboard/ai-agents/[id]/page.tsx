@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
   ArrowLeft, Pencil, Trash2, Calendar, Globe, Cpu, Hash, Link2, Box,
-  Play, Pause, Settings, Plus, AlertCircle, Clock, Database
+  Play, Pause, Settings, Plus, AlertCircle, Clock, Database, Activity
 } from "lucide-react";
 import {
   Dialog,
@@ -342,6 +342,32 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
               className="gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
             >
               <Link2 className="h-4 w-4" /> Open Editor
+            </Button>
+          </a>
+          <a 
+            href={`https://n8n.nodemationhub.com/workflow/${agent.workflow_id}/executions`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group cursor-pointer"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-full bg-muted text-muted-foreground group-hover:bg-blue-500/10 group-hover:text-blue-600 transition-colors">
+                <Activity className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-lg">Execution History</span>
+                </div>
+                <p className="text-sm font-mono text-muted-foreground truncate max-w-[200px] sm:max-w-md">
+                  https://n8n.nodemationhub.com/workflow/{agent.workflow_id}/executions
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              className="gap-2 group-hover:bg-blue-600 group-hover:text-white transition-all"
+            >
+              <Activity className="h-4 w-4" /> View Executions
             </Button>
           </a>
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group">

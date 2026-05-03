@@ -1,16 +1,18 @@
 import { connectDB } from "@/lib/mongodb";
 import AIAgent from "@/models/AIAgent";
+import { withAuth } from "@/lib/auth/withAuth";
 
-export async function GET() {
+// GET all agents
+export const GET = withAuth(async (req: Request, context: any, session: any) => {
   await connectDB();
 
   const agents = await AIAgent.find();
 
   return Response.json(agents);
-}
+});
 
 // CREATE new agent
-export async function POST(req: Request) {
+export const POST = withAuth(async (req: Request, context: any, session: any) => {
   try {
     await connectDB();
 
@@ -34,4 +36,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
+});
