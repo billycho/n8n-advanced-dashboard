@@ -158,3 +158,31 @@ schedule is from
 
 Basically we only need to edit the cron expression (on the page we also directly edit the cronexpression)
 
+///////////////////////////////////////////////////////////////////////////////////////////
+Create a model named reports
+the model will be used to receive reports from agent analyzer from n8n (n8n will hit nextjs api that will create this report)
+reports contain 3 data:
+agent (Objectid) that will reference /model/AIAgent
+report_date => Report Date
+report_status => success, failed, warning
+report_summary => the main content of the report
+
+also if you have more ideas (must be super important to put on the report) feel free to ask me
+
+also create the apis for creating report
+create 1 (create report post) on app/api/integrations/report
+
+create api for retrieving the report list and specific report (this is for internal next js app) on app/api/reports (create get all and also by report id [id])
+
+for api refer to how existing api build (withapikey (integrations) and withauth (internal))
+
+////////////////////////
+Create get report page on
+app/dashboard/report
+
+also report detail page on
+app/dashboard/report/[report_id]
+both page get data from api/reports/route.ts and apo/reports/[id]/route.ts
+on / report if table row clicked go to report/[report_id]
+
+use the same design & UX with app/dashboard/ai-agents and app/dashboard/ai-agents/[id]

@@ -13,3 +13,4 @@ export function withAuth(handler: Function) {
     return handler(req, context, session);
   };
 }
+
