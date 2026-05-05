@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import { ThemeProvider } from "next-themes";
 
 import { Toaster } from "sonner";
 
@@ -13,9 +14,11 @@ export default function Providers({
   const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-      <Toaster position="top-center" richColors />
-    </QueryClientProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <QueryClientProvider client={queryClient}>
+        {children}
+        <Toaster position="top-center" richColors />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

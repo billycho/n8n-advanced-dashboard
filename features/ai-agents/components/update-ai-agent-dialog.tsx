@@ -10,6 +10,13 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useUpdateAIAgent } from "@/features/ai-agents/hooks"
 import type { AIAgent } from "@/features/ai-agents/types"
 
@@ -77,6 +84,23 @@ export function UpdateAIAgentDialog({
               value={formData.category || ""}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Environment</Label>
+            <Select 
+              value={formData.environment || ""} 
+              onValueChange={(val: "dev" | "staging" | "prod") => setFormData({ ...formData, environment: val })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select environment" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="dev">Dev</SelectItem>
+                <SelectItem value="staging">Staging</SelectItem>
+                <SelectItem value="prod">Prod</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

@@ -186,3 +186,27 @@ both page get data from api/reports/route.ts and apo/reports/[id]/route.ts
 on / report if table row clicked go to report/[report_id]
 
 use the same design & UX with app/dashboard/ai-agents and app/dashboard/ai-agents/[id]
+
+//
+On settings page
+update the name and email, make them workflow
+load the value from betterauth (or the correct way)
+save changes => save the data
+
+//
+apply next-theme to this project
+also put the toggle to turn it on or off on setting page below email input (light mode and dark mode)
+
+//
+update the overview page
+this is the specs
+Overview Page:
+Cards:
+1. Total Active AI Agents
+2. Total AI Agents
+3. Total Reports Today
+4. Total Reports This Week
+
+2 Tables left and right 
+5 Latest AI Agents (left)
+5 Latest Reports (right)
