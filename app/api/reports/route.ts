@@ -1,6 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
-import Report from "@/models/Report";
 import AIAgent from "@/models/AIAgent"; // Ensure AIAgent is registered
+import Report from "@/models/Report";
 import { withAuth } from "@/lib/auth/withAuth";
 
 export const GET = withAuth(async (req: Request) => {

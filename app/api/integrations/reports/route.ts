@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
+import AIAgent from "@/models/AIAgent"; // Ensure AIAgent is registered
 import Report from "@/models/Report";
 import { withAPIKey } from "@/lib/auth/withAPIKey";
 

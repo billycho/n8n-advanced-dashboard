@@ -122,8 +122,8 @@ export default function ReportsPage() {
 
                     <TableCell>
                       <p className="text-sm text-muted-foreground line-clamp-1">
-                        {report.report_summary}
-                      </p>
+  {report.report_summary?.slice(0, 120)}
+</p>
                     </TableCell>
 
                     <TableCell className="text-right">

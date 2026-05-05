@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import "@/models/AIAgent"; // ✅ must exist somewhere
 
 const ReportSchema = new mongoose.Schema(
   {
