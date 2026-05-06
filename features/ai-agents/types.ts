@@ -6,7 +6,9 @@ export type AIAgent = {
   environment?: "dev" | "staging" | "prod";
   webhook_url?: string;
   workflow_id?: string;
-  model?: "gpt-4" | "gpt-5";
+  model?: string;
   last_run_at?: Date;
   slug: string;
+  createdAt: Date;
+  updatedAt: Date;
 };

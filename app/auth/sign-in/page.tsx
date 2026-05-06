@@ -11,7 +11,7 @@ import { signIn } from "@/lib/auth/auth-client";
 
 export default function SignIn() {
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("admin_billy@nodemationhub.com");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const [error, setError] = useState("");
@@ -80,7 +80,7 @@ export default function SignIn() {
                         <div className="w-full flex flex-col gap-3">
                             <Button
                                 type="submit"
-                                className="w-full text-white py-2 rounded"
+                                className="w-full py-2 rounded"
                                 disabled={loading}
                             >
                                 Sign In

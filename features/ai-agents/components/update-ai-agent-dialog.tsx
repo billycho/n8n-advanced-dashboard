@@ -88,8 +88,8 @@ export function UpdateAIAgentDialog({
 
           <div className="space-y-2">
             <Label>Environment</Label>
-            <Select 
-              value={formData.environment || ""} 
+            <Select
+              value={formData.environment || ""}
               onValueChange={(val: "dev" | "staging" | "prod") => setFormData({ ...formData, environment: val })}
             >
               <SelectTrigger>
@@ -118,6 +118,15 @@ export function UpdateAIAgentDialog({
               placeholder="Enter workflow id"
               value={formData.workflow_id || ""}
               onChange={(e) => setFormData({ ...formData, workflow_id: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Model</Label>
+            <Input
+              placeholder="Enter model (e.g. gpt-4)"
+              value={formData.model || ""}
+              onChange={(e) => setFormData({ ...formData, model: e.target.value })}
             />
           </div>
 

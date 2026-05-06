@@ -55,11 +55,11 @@ export default function AIAgentsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">AI Agents</h1>
-          <p className="text-muted-foreground">Manage your AI Agents</p>
+          <h1 className="text-3xl font-bold tracking-tight">AI Agents</h1>
+          <p className="text-muted-foreground">Manage and monitor your fleet of AI agents</p>
         </div>
 
         <div>
@@ -67,14 +67,16 @@ export default function AIAgentsPage() {
         </div>
       </div>
 
-      <Card>
+      <Card className="shadow-md border-primary/10">
         <CardHeader>
           <CardTitle>AI Agent List</CardTitle>
         </CardHeader>
 
         <CardContent>
           {isLoading ? (
-            <p>Loading...</p>
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
           ) : (
             <>
               <Table>
@@ -82,7 +84,7 @@ export default function AIAgentsPage() {
                   <TableRow>
                     <TableHead className="w-[20%] whitespace-nowrap truncate">ID</TableHead>
                     <TableHead>Name</TableHead>
-                    {/* <TableHead className="w-[25px] text-right">Actions</TableHead> */}
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
 

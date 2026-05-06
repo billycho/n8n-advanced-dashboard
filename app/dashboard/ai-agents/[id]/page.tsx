@@ -234,17 +234,26 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                   <Globe className="h-3 w-3" /> Slug
                 </Label>
-                <p className="font-medium">{agent.slug}</p>
+                <p className="font-medium">{agent.slug || "Not specified"}</p>
               </div>
 
               <div className="space-y-2 p-3 rounded-lg bg-muted/30 border border-muted">
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                  <Calendar className="h-3 w-3" /> Last Run
+                  <Calendar className="h-3 w-3" /> Category
+                </Label>
+                <p className="font-medium">
+                  {agent.category || "General"}
+                </p>
+              </div>
+
+              {/* <div className="space-y-2 p-3 rounded-lg bg-muted/30 border border-muted">
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" /> Last Run At
                 </Label>
                 <p className="font-medium">
                   {agent.last_run_at ? new Date(agent.last_run_at).toLocaleString() : "Never run"}
                 </p>
-              </div>
+              </div> */}
             </div>
 
             <div className="space-y-4 pt-4 border-t">
@@ -276,17 +285,21 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
               <CardTitle className="text-lg">Metadata</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex justify-between items-center py-2 border-b border-muted">
+              {/* <div className="flex justify-between items-center py-2 border-b border-muted">
                 <span className="text-sm text-muted-foreground">Category</span>
                 <Badge variant="outline" className="capitalize">{agent.category || "General"}</Badge>
-              </div>
+              </div> */}
               <div className="flex justify-between items-center py-2 border-b border-muted">
                 <span className="text-sm text-muted-foreground">Environment</span>
                 <span className="text-sm font-medium capitalize">{agent.environment || "Not set"}</span>
               </div>
               <div className="flex justify-between items-center py-2">
                 <span className="text-sm text-muted-foreground">Created At</span>
-                <span className="text-sm font-medium">N/A</span>
+                <span className="text-sm font-medium">  {agent.createdAt ? new Date(agent.createdAt).toLocaleString() : "Unknown"}</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-sm text-muted-foreground">Updated At</span>
+                <span className="text-sm font-medium">  {agent.updatedAt ? new Date(agent.updatedAt).toLocaleString() : "Unknown"}</span>
               </div>
             </CardContent>
           </Card>

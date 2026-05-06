@@ -43,7 +43,7 @@ export default function DashboardLayout({
             </Button>
           </Link>
 
-          <Link href="/dashboard/analytics">
+          {/* <Link href="/dashboard/analytics">
             <Button variant="ghost" className="w-full justify-start gap-2">
               <BarChart3 className="h-4 w-4" />
               Analytics (Dev)
@@ -55,7 +55,7 @@ export default function DashboardLayout({
               <Settings className="h-4 w-4" />
               Dashboard Var 1 (Dev)
             </Button>
-          </Link>
+          </Link> */}
 
           <SignOutButton />
         </nav>

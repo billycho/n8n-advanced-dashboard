@@ -113,7 +113,7 @@ export default function DashboardPage() {
         {/* Latest AI Agents */}
         <Card className="col-span-1 shadow-md border-primary/10">
           <CardHeader>
-            <CardTitle>5 Latest AI Agents</CardTitle>
+            <CardTitle>Latest AI Agents</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
         {/* Latest Reports */}
         <Card className="col-span-1 shadow-md border-primary/10">
           <CardHeader>
-            <CardTitle>5 Latest Reports</CardTitle>
+            <CardTitle>Latest Reports</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>

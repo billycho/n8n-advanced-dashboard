@@ -62,7 +62,7 @@ export function AddAIAgentDialog() {
             />
           </div> */}
 
-            <div className="space-y-2">
+          <div className="space-y-2">
             <Label>Workflow ID</Label>
             <Input 
               placeholder="Enter workflow id" 
@@ -70,6 +70,15 @@ export function AddAIAgentDialog() {
               onChange={(e) => setFormData({ ...formData, workflow_id: e.target.value })}
             />
           </div>
+{/* 
+          <div className="space-y-2">
+            <Label>Model</Label>
+            <Input 
+              placeholder="Enter model (e.g. gpt-4)" 
+              value={formData.model || ""}
+              onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+            />
+          </div> */}
 
 
           {/* <div className="space-y-2">
