@@ -1,51 +1,51 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getN8NWorkflow, updateN8NWorkflow } from "./api";
-import { N8NWorkflow, WorkflowAssignment, WorkflowInterval } from "./types";
+import { getWorkflows, getWorkflow, createWorkflow, updateWorkflow, deleteWorkflow } from "./api";
+import { Workflow } from "./types";
 
-type UseN8NWorkflowOptions = {
-  enabled?: boolean;
-};
-
-export function useN8NWorkflow(
-  id: string,
-  options?: UseN8NWorkflowOptions
-) {
-  console.log("Fetching workflow with ID:", id);
+export function useWorkflows() {
   return useQuery({
-    queryKey: ["n8n-workflow", id],
-    queryFn: () => getN8NWorkflow(id),
-
-    // allow override, fallback to default behavior
-    enabled: options?.enabled ?? !!id,
+    queryKey: ["workflows"],
+    queryFn: getWorkflows,
   });
 }
-export function useUpdateN8NWorkflow() {
+
+export function useWorkflow(id: string) {
+  return useQuery({
+    queryKey: ["workflows", id],
+    queryFn: () => getWorkflow(id),
+    enabled: !!id,
+  });
+}
+
+export function useCreateWorkflow() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<N8NWorkflow> }) =>
-      updateN8NWorkflow(id, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["n8n-workflow", variables.id] });
+    mutationFn: createWorkflow,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["workflows"] });
     },
   });
 }
 
-// Helper to extract data from workflow
-export function extractWorkflowData(workflow: N8NWorkflow) {
-  const active = workflow.active;
+export function useUpdateWorkflow() {
+  const queryClient = useQueryClient();
 
-  const setNode = workflow.nodes.find((n) => n.type === "n8n-nodes-base.set");
-  const parameters: WorkflowAssignment[] = setNode?.parameters?.assignments?.assignments || [];
+  return useMutation({
+    mutationFn: updateWorkflow,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["workflows"] });
+    },
+  });
+}
 
-  const scheduleNode = workflow.nodes.find((n) => n.type === "n8n-nodes-base.scheduleTrigger");
-  const cronExpression: string = scheduleNode?.parameters?.rule?.interval?.[0]?.expression || "";
+export function useDeleteWorkflow() {
+  const queryClient = useQueryClient();
 
-  return {
-    active,
-    parameters,
-    cronExpression,
-    setNodeId: setNode?.id,
-    scheduleNodeId: scheduleNode?.id,
-  };
+  return useMutation({
+    mutationFn: deleteWorkflow,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["workflows"] });
+    },
+  });
 }

@@ -1,21 +1,31 @@
-import { N8NWorkflow } from "./types";
+import { Workflow } from "./types";
 
-const INTERNAL_API_URL = "/api/n8n/workflows";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
-export async function getN8NWorkflow(id: string): Promise<N8NWorkflow> {
-  const res = await fetch(`${INTERNAL_API_URL}/${id}`);
+export async function getWorkflows(): Promise<Workflow[]> {
+  const res = await fetch(`${API_URL}/api/workflows`);
+  return res.json();
+}
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch workflow: ${res.statusText}`);
-  }
+export async function getWorkflow(id: string): Promise<Workflow> {
+  const res = await fetch(`${API_URL}/api/workflows/${id}`);
+  return res.json();
+}
 
-  console.log(`Fetched workflow with ID ${id}:`, await res.clone().json());
+export async function createWorkflow(data: Partial<Workflow>) {
+  const res = await fetch(`${API_URL}/api/workflows`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 
   return res.json();
 }
 
-export async function updateN8NWorkflow(id: string, data: Partial<N8NWorkflow>) {
-  const res = await fetch(`${INTERNAL_API_URL}/${id}`, {
+export async function updateWorkflow(data: Partial<Workflow> & { _id: string }) {
+  const res = await fetch(`${API_URL}/api/workflows/${data._id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -23,9 +33,13 @@ export async function updateN8NWorkflow(id: string, data: Partial<N8NWorkflow>) 
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    throw new Error(`Failed to update workflow: ${res.statusText}`);
-  }
+  return res.json();
+}
+
+export async function deleteWorkflow(id: string) {
+  const res = await fetch(`${API_URL}/api/workflows/${id}`, {
+    method: "DELETE",
+  });
 
   return res.json();
 }

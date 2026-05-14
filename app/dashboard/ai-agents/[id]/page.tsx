@@ -32,7 +32,7 @@ import {
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-import { useN8NWorkflow, useUpdateN8NWorkflow, extractWorkflowData } from "@/features/workflows/hooks";
+import { useN8NWorkflow, useUpdateN8NWorkflow, extractWorkflowData } from "@/features/n8n/workflows/hooks";
 import cronstrue from "cronstrue";
 
 export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -357,7 +357,7 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
               <Link2 className="h-4 w-4" /> Open Editor
             </Button>
           </a>
-          <a 
+          <a
             href={`https://n8n.nodemationhub.com/workflow/${agent.workflow_id}/executions`}
             target="_blank"
             rel="noopener noreferrer"
