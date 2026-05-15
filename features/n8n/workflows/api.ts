@@ -29,3 +29,27 @@ export async function updateN8NWorkflow(id: string, data: Partial<N8NWorkflow>) 
 
   return res.json();
 }
+
+export async function activateN8NWorkflow(id: string) {
+  const res = await fetch(`${INTERNAL_API_URL}/${id}/activate`, {
+    method: "POST",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to activate workflow: ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+export async function deactivateN8NWorkflow(id: string) {
+  const res = await fetch(`${INTERNAL_API_URL}/${id}/deactivate`, {
+    method: "POST",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to deactivate workflow: ${res.statusText}`);
+  }
+
+  return res.json();
+}

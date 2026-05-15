@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getN8NWorkflow, updateN8NWorkflow } from "./api";
+import { getN8NWorkflow, updateN8NWorkflow, activateN8NWorkflow, deactivateN8NWorkflow } from "./api";
 import { N8NWorkflow, WorkflowAssignment, WorkflowInterval } from "./types";
 
 type UseN8NWorkflowOptions = {
@@ -27,6 +27,28 @@ export function useUpdateN8NWorkflow() {
       updateN8NWorkflow(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["n8n-workflow", variables.id] });
+    },
+  });
+}
+
+export function useActivateN8NWorkflow() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => activateN8NWorkflow(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ["n8n-workflow", id] });
+    },
+  });
+}
+
+export function useDeactivateN8NWorkflow() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deactivateN8NWorkflow(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ["n8n-workflow", id] });
     },
   });
 }

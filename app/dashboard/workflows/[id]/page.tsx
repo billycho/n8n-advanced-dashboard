@@ -14,6 +14,32 @@ import {
   Play, Pause, Settings, Plus, AlertCircle, Clock, Database, Activity,
   Zap
 } from "lucide-react";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import {
+  useN8NWorkflow,
+  useActivateN8NWorkflow,
+  useDeactivateN8NWorkflow,
+  extractWorkflowData
+} from "@/features/n8n/workflows/hooks";
+import cronstrue from "cronstrue";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { WorkflowAssignment } from "@/features/n8n/workflows/types";
 
 export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -21,6 +47,57 @@ export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: 
   const { data: workflow, isLoading } = useWorkflow(id);
   const { mutate: deleteWorkflow } = useDeleteWorkflow();
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+
+  // n8n Workflow State
+  const [workflowEnabled, setWorkflowEnabled] = useState(false);
+  const [scheduleTime, setScheduleTime] = useState("");
+  const [parameters, setParameters] = useState<WorkflowAssignment[]>([]);
+  const [selectedParam, setSelectedParam] = useState<WorkflowAssignment | null>(null);
+
+  const { data: n8nWorkflow, isLoading: isN8NLoading } = useN8NWorkflow(
+    workflow?.workflow_id ?? "",
+    {
+      enabled: !!workflow?.workflow_id,
+    }
+  );
+
+  const { mutate: activateWorkflow, isPending: isActivating } = useActivateN8NWorkflow();
+  const { mutate: deactivateWorkflow, isPending: isDeactivating } = useDeactivateN8NWorkflow();
+
+  useEffect(() => {
+    if (n8nWorkflow) {
+      const data = extractWorkflowData(n8nWorkflow);
+      setWorkflowEnabled(data.active);
+      setScheduleTime(data.cronExpression);
+      setParameters(data.parameters);
+    }
+  }, [n8nWorkflow]);
+
+  const handleToggleStatus = () => {
+    if (!workflow?.workflow_id) return;
+
+    if (workflowEnabled) {
+      deactivateWorkflow(workflow.workflow_id, {
+        onSuccess: () => {
+          setWorkflowEnabled(false);
+          toast.success("Workflow deactivated successfully");
+        },
+        onError: (error) => {
+          toast.error(`Failed to deactivate: ${error.message}`);
+        }
+      });
+    } else {
+      activateWorkflow(workflow.workflow_id, {
+        onSuccess: () => {
+          setWorkflowEnabled(true);
+          toast.success("Workflow activated successfully");
+        },
+        onError: (error) => {
+          toast.error(`Failed to activate: ${error.message}`);
+        }
+      });
+    }
+  };
 
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this Workflow?")) {
@@ -207,6 +284,213 @@ export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: 
           </Card>
         </div>
       </div>
+
+      {/* n8n Workflow Details Section */}
+      {workflow?.workflow_id && (
+        <>
+          <Card className="shadow-md border-primary/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5 text-primary" /> n8n Workflow Settings
+              </CardTitle>
+              <CardDescription>Manage the automation workflow for this agent</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              <a
+                href={`https://n8n.nodemationhub.com/workflow/${workflow.workflow_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group cursor-pointer"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-full bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                    <Settings className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-lg">n8n Workflow Editor</span>
+                    </div>
+                    <p className="text-sm font-mono text-muted-foreground truncate max-w-[200px] sm:max-w-md">
+                      https://n8n.nodemationhub.com/workflow/{workflow.workflow_id}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  className="gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+                >
+                  <Link2 className="h-4 w-4" /> Open Editor
+                </Button>
+              </a>
+
+              <a
+                href={`https://n8n.nodemationhub.com/workflow/${workflow.workflow_id}/executions`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group cursor-pointer"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-full bg-muted text-muted-foreground group-hover:bg-blue-500/10 group-hover:text-blue-600 transition-colors">
+                    <Activity className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-lg">Execution History</span>
+                    </div>
+                    <p className="text-sm font-mono text-muted-foreground truncate max-w-[200px] sm:max-w-md">
+                      https://n8n.nodemationhub.com/workflow/{workflow.workflow_id}/executions
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  className="gap-2 group-hover:bg-blue-600 group-hover:text-white transition-all"
+                >
+                  <Activity className="h-4 w-4" /> View Executions
+                </Button>
+              </a>
+
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group">
+                <div className="flex items-center gap-4">
+                  <div className={`p-3 rounded-full ${workflowEnabled ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"}`}>
+                    {workflowEnabled ? <Play className="h-6 w-6" /> : <Pause className="h-6 w-6" />}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-lg">Workflow Status</span>
+                      <Badge variant={workflowEnabled ? "default" : "destructive"}>
+                        {workflowEnabled ? "Enabled" : "Disabled"}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">The workflow is currently {workflowEnabled ? "running on schedule" : "paused"}</p>
+                  </div>
+                </div>
+                <Button
+                  variant={workflowEnabled ? "outline" : "default"}
+                  className="gap-2"
+                  onClick={handleToggleStatus}
+                  disabled={isActivating || isDeactivating}
+                >
+                  {workflowEnabled ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                  {isActivating || isDeactivating ? "Processing..." : (workflowEnabled ? "Disable Workflow" : "Enable Workflow")}
+                </Button>
+              </div>
+
+              {scheduleTime && (
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-full bg-blue-500/10 text-blue-600">
+                      <Clock className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-lg">Schedule Time</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {(() => {
+                          try {
+                            return cronstrue.toString(scheduleTime);
+                          } catch (e) {
+                            return `Runs on schedule: ${scheduleTime}`;
+                          }
+                        })()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* n8n Workflow Parameters Section */}
+          <Card className="shadow-md border-primary/10">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Database className="h-5 w-5 text-primary" /> Workflow Parameters
+                </CardTitle>
+                <CardDescription>Custom variables passed to the n8n execution environment</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50">
+                      <TableHead className="w-[20%] font-bold">Key</TableHead>
+                      <TableHead className="font-bold">Value</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {parameters.length > 0 ? (
+                      parameters.map((param, i) => (
+                        <TableRow
+                          key={i}
+                          className="group cursor-pointer hover:bg-muted/50 transition-colors"
+                          onClick={() => setSelectedParam(param)}
+                        >
+                          <TableCell className="w-[20%] font-mono text-sm max-w-[200px] truncate" title={param.name}>
+                            {param.name}
+                          </TableCell>
+                          <TableCell className="text-sm max-w-[300px] truncate text-muted-foreground" title={param.value}>
+                            {param.value}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={2} className="text-center py-8 text-muted-foreground">
+                          No parameters configured in the n8n workflow.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Parameter Detail Dialog */}
+          <Dialog open={!!selectedParam} onOpenChange={(open) => !open && setSelectedParam(null)}>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Database className="h-5 w-5 text-primary" /> Parameter Details
+                </DialogTitle>
+                <DialogDescription>
+                  View the key and value for this workflow parameter.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-6 py-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Key</Label>
+                  <div className="p-3 rounded-md bg-muted font-mono text-sm break-all border border-muted">
+                    {selectedParam?.name}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Value</Label>
+                  <textarea
+                    value={selectedParam?.value || ""}
+                    readOnly
+                    className="flex min-h-[200px] w-full rounded-md border border-muted bg-muted/30 px-3 py-2 text-sm font-mono focus-visible:outline-none focus-visible:ring-0 cursor-pointer resize-none active:bg-muted/50 transition-colors"
+                    onClick={() => {
+                      if (selectedParam?.value) {
+                        navigator.clipboard.writeText(selectedParam.value);
+                        toast.success("Value copied to clipboard");
+                      }
+                    }}
+                  />
+                  <p className="text-[10px] text-muted-foreground italic">Click the text box above to copy the value to your clipboard</p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={() => setSelectedParam(null)}>Close</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
 
       <UpdateWorkflowDialog
         workflow={workflow}
