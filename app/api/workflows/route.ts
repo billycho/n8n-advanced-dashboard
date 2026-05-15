@@ -27,6 +27,7 @@ export const POST = withAuth(async (req: Request, context: any, session: any) =>
       workflow_id: body.workflow_id,
       model: body.model,
       slug: body.slug,
+      form_url: body.form_url,
       active: body.active !== undefined ? body.active : true,
       triggerType: body.triggerType || "Manual",
     });

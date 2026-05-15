@@ -78,8 +78,17 @@ export function ViewWorkflowDialog({
             <div className="col-span-2">{workflow.slug || "-"}</div>
           </div>
 
+          {workflow.form_url && (
+            <div className="grid grid-cols-3 items-center gap-4 border-b pb-2">
+              <Label className="text-right text-muted-foreground">Form URL</Label>
+              <div className="col-span-2 text-primary hover:underline cursor-pointer truncate" onClick={() => window.open(workflow.form_url, '_blank')}>
+                {workflow.form_url}
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-3 items-center gap-4">
-            <Label className="text-right text-muted-foreground">Workflow ID</Label>
+            <Label className="text-right text-muted-foreground">n8n Workflow ID</Label>
             <div className="col-span-2 break-all font-mono text-xs">{workflow.workflow_id || "-"}</div>
           </div>
         </div>

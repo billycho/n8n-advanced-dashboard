@@ -39,8 +39,33 @@ export function UpdateWorkflowDialog({
     }
   }, [workflow])
 
+  const isValidUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   const handleSubmit = () => {
     if (workflow?._id) {
+      if (!formData.name) {
+        alert("Name is required");
+        return;
+      }
+
+      if (formData.triggerType === "Form") {
+        if (!formData.form_url) {
+          alert("Form URL is required for Form trigger type");
+          return;
+        }
+        if (!isValidUrl(formData.form_url)) {
+          alert("Please enter a valid URL for the Form URL");
+          return;
+        }
+      }
+
       updateWorkflow(
         { _id: workflow._id, ...formData },
         {
@@ -114,7 +139,7 @@ export function UpdateWorkflowDialog({
           </div>
 
           <div className="space-y-2">
-            <Label>Workflow ID</Label>
+            <Label>n8n Workflow ID</Label>
             <Input
               placeholder="Enter workflow id"
               value={formData.workflow_id || ""}
@@ -153,12 +178,25 @@ export function UpdateWorkflowDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Schedule">Schedule</SelectItem>
-                <SelectItem value="Webhook">Webhook</SelectItem>
+                {/* <SelectItem value="Webhook">Webhook</SelectItem> */}
                 <SelectItem value="Manual">Manual</SelectItem>
                 <SelectItem value="Form">Form</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
+          {formData.triggerType === "Form" && (
+            <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <Label className="text-primary font-semibold">Form URL</Label>
+              <Input 
+                placeholder="https://forms.gle/..." 
+                value={formData.form_url || ""}
+                onChange={(e) => setFormData({ ...formData, form_url: e.target.value })}
+                className="border-primary/50 focus-visible:ring-primary"
+              />
+              <p className="text-[10px] text-muted-foreground italic">Required for Form trigger</p>
+            </div>
+          )}
 
           <Button className="w-full" onClick={handleSubmit} disabled={isPending}>
             {isPending ? "Updating..." : "Update"}

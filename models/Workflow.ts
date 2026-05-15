@@ -32,6 +32,9 @@ const WorkflowSchema = new mongoose.Schema(
     slug: {
       type: String,
     },
+    form_url: {
+      type: String,
+    },
     active: {
       type: Boolean,
       default: true,

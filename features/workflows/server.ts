@@ -22,6 +22,7 @@ export async function createWorkflowInDB(data: WorkflowType) {
     workflow_id: data.workflow_id,
     model: data.model,
     slug: data.slug,
+    form_url: data.form_url,
     active: data.active,
     triggerType: data.triggerType,
   });

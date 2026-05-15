@@ -131,7 +131,7 @@ export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: 
             <div className="space-y-4 pt-4 border-t">
               <div className="space-y-2">
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                  <Hash className="h-3 w-3" /> External Workflow ID
+                  <Hash className="h-3 w-3" /> n8n Workflow ID
                 </Label>
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50 font-mono text-sm border border-secondary">
                   {workflow.workflow_id || "No external workflow assigned"}
@@ -146,6 +146,23 @@ export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: 
                   {workflow.webhook_url || "No webhook URL configured"}
                 </div>
               </div>
+
+              {workflow.form_url && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                  <Label className="text-xs uppercase tracking-wider text-primary flex items-center gap-1 font-bold">
+                    <Database className="h-3 w-3" /> Form URL
+                  </Label>
+                  <a
+                    href={workflow.form_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-2 p-3 rounded-lg bg-primary/5 text-primary font-medium border border-primary/20 hover:bg-primary/10 transition-colors group"
+                  >
+                    <span className="truncate">{workflow.form_url}</span>
+                    <Link2 className="h-4 w-4 opacity-50 group-hover:opacity-100" />
+                  </a>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -182,7 +199,7 @@ export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: 
                 {workflow.active ? "Workflow is active" : "Workflow is paused"}
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                {workflow.active 
+                {workflow.active
                   ? "This workflow is currently live and will trigger based on the defined trigger type."
                   : "This workflow is currently disabled and will not process any triggers."}
               </p>

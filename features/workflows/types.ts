@@ -9,6 +9,7 @@ export type Workflow = {
   model?: string;
   last_run_at?: Date;
   slug: string;
+  form_url?: string;
   active: boolean;
   triggerType: "Schedule" | "Webhook" | "Manual" | "Form";
   createdAt: Date;

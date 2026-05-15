@@ -30,20 +30,41 @@ export function AddWorkflowDialog() {
   })
   const { mutate: createWorkflow, isPending } = useCreateWorkflow()
 
-  const handleSubmit = () => {
-    if (formData.name) {
-      createWorkflow(formData as Workflow, {
-        onSuccess: () => {
-          setOpen(false)
-          setFormData({
-            active: true,
-            triggerType: "Schedule",
-          }) // reset
-        }
-      })
-    } else {
-      alert("Name is required")
+  const isValidUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
     }
+  };
+
+  const handleSubmit = () => {
+    if (!formData.name) {
+      alert("Name is required");
+      return;
+    }
+
+    if (formData.triggerType === "Form") {
+      if (!formData.form_url) {
+        alert("Form URL is required for Form trigger type");
+        return;
+      }
+      if (!isValidUrl(formData.form_url)) {
+        alert("Please enter a valid URL for the Form URL");
+        return;
+      }
+    }
+
+    createWorkflow(formData as Workflow, {
+      onSuccess: () => {
+        setOpen(false)
+        setFormData({
+          active: true,
+          triggerType: "Schedule",
+        }) // reset
+      }
+    })
   }
 
   return (
@@ -68,7 +89,7 @@ export function AddWorkflowDialog() {
           </div>
 
           <div className="space-y-2">
-            <Label>Workflow ID</Label>
+            <Label>n8n Workflow ID</Label>
             <Input 
               placeholder="Enter workflow id" 
               value={formData.workflow_id || ""}
@@ -98,12 +119,25 @@ export function AddWorkflowDialog() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Schedule">Schedule</SelectItem>
-                <SelectItem value="Webhook">Webhook</SelectItem>
+                {/* <SelectItem value="Webhook">Webhook</SelectItem> */}
                 <SelectItem value="Manual">Manual</SelectItem>
                 <SelectItem value="Form">Form</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
+          {formData.triggerType === "Form" && (
+            <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <Label className="text-primary font-semibold">Form URL</Label>
+              <Input 
+                placeholder="https://forms.com/123..." 
+                value={formData.form_url || ""}
+                onChange={(e) => setFormData({ ...formData, form_url: e.target.value })}
+                className="border-primary/50 focus-visible:ring-primary"
+              />
+              <p className="text-[10px] text-muted-foreground italic">Required for Form trigger</p>
+            </div>
+          )}
 
           <Button className="w-full" onClick={handleSubmit} disabled={isPending}>
             {isPending ? "Submitting..." : "Submit"}
