@@ -23,6 +23,9 @@ import {
   extractWorkflowData
 } from "@/features/n8n/workflows/hooks";
 import cronstrue from "cronstrue";
+
+const N8N_URL = process.env.NEXT_PUBLIC_N8N_URL  || '';
+
 import {
   Dialog,
   DialogContent,
@@ -297,7 +300,7 @@ export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: 
             </CardHeader>
             <CardContent className="grid gap-6">
               <a
-                href={`https://n8n.nodemationhub.com/workflow/${workflow.workflow_id}`}
+                href={`${N8N_URL}/workflow/${workflow.workflow_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group cursor-pointer"
@@ -311,7 +314,7 @@ export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: 
                       <span className="font-semibold text-lg">n8n Workflow Editor</span>
                     </div>
                     <p className="text-sm font-mono text-muted-foreground truncate max-w-[200px] sm:max-w-md">
-                      https://n8n.nodemationhub.com/workflow/{workflow.workflow_id}
+                      {N8N_URL}/workflow/{workflow.workflow_id}
                     </p>
                   </div>
                 </div>
@@ -324,7 +327,7 @@ export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: 
               </a>
 
               <a
-                href={`https://n8n.nodemationhub.com/workflow/${workflow.workflow_id}/executions`}
+                href={`${N8N_URL}/workflow/${workflow.workflow_id}/executions`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group cursor-pointer"
@@ -338,7 +341,7 @@ export default function WorkflowDetailsPage({ params }: { params: Promise<{ id: 
                       <span className="font-semibold text-lg">Execution History</span>
                     </div>
                     <p className="text-sm font-mono text-muted-foreground truncate max-w-[200px] sm:max-w-md">
-                      https://n8n.nodemationhub.com/workflow/{workflow.workflow_id}/executions
+                      {N8N_URL}/workflow/{workflow.workflow_id}/executions
                     </p>
                   </div>
                 </div>

@@ -19,7 +19,7 @@ export default function DashboardLayout({
               <Home className="h-4 w-4" />
               Overview
             </Button>
-          
+
           </Link>
           <Link href="/dashboard/workflows">
             <Button variant="ghost" className="w-full justify-start gap-2">
@@ -32,6 +32,13 @@ export default function DashboardLayout({
             <Button variant="ghost" className="w-full justify-start gap-2">
               <Users className="h-4 w-4" />
               AI Agents
+            </Button>
+          </Link>
+
+          <Link href="/dashboard/schedules">
+            <Button variant="ghost" className="w-full justify-start gap-2">
+              <FileText className="h-4 w-4" />
+              Schedules
             </Button>
           </Link>
 

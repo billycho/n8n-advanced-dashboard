@@ -35,6 +35,9 @@ import { toast } from "sonner";
 import { useN8NWorkflow, useUpdateN8NWorkflow, extractWorkflowData } from "@/features/n8n/workflows/hooks";
 import cronstrue from "cronstrue";
 
+const N8N_URL = process.env.NEXT_PUBLIC_N8N_URL || '';
+
+
 export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -332,7 +335,7 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
         </CardHeader>
         <CardContent className="grid gap-6">
           <a
-            href={`https://n8n.nodemationhub.com/workflow/${agent.workflow_id}`}
+            href={`${N8N_URL}/workflow/${agent.workflow_id}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group cursor-pointer"
@@ -346,7 +349,7 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
                   <span className="font-semibold text-lg">n8n Workflow Editor</span>
                 </div>
                 <p className="text-sm font-mono text-muted-foreground truncate max-w-[200px] sm:max-w-md">
-                  https://n8n.nodemationhub.com/workflow/{agent.workflow_id}
+                  {N8N_URL}/workflow/{agent.workflow_id}
                 </p>
               </div>
             </div>
@@ -358,7 +361,7 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
             </Button>
           </a>
           <a
-            href={`https://n8n.nodemationhub.com/workflow/${agent.workflow_id}/executions`}
+            href={`${N8N_URL}/workflow/${agent.workflow_id}/executions`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-xl bg-muted/20 border border-muted hover:bg-muted/40 transition-colors duration-200 group cursor-pointer"
@@ -372,7 +375,7 @@ export default function AIAgentDetailsPage({ params }: { params: Promise<{ id: s
                   <span className="font-semibold text-lg">Execution History</span>
                 </div>
                 <p className="text-sm font-mono text-muted-foreground truncate max-w-[200px] sm:max-w-md">
-                  https://n8n.nodemationhub.com/workflow/{agent.workflow_id}/executions
+                  {N8N_URL}/workflow/{agent.workflow_id}/executions
                 </p>
               </div>
             </div>
