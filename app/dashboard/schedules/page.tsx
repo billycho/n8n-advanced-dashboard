@@ -2,9 +2,9 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useWorkflows } from "@/features/workflows/hooks";
-import { useAIAgents } from "@/features/ai-agents/hooks";
-import { useQueries } from "@tanstack/react-query";
+import { getWorkflows } from "@/features/workflows/api";
+import { getAIAgents } from "@/features/ai-agents/api";
+import { useQuery, useQueries } from "@tanstack/react-query";
 import { getN8NWorkflow } from "@/features/n8n/workflows/api";
 import { extractWorkflowData } from "@/features/n8n/workflows/hooks";
 import cronstrue from "cronstrue";
@@ -45,9 +45,24 @@ export default function SchedulesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
+  const queryOptions = {
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  };
+
   // 1. Fetch all items from our DB
-  const { data: workflows = [], isLoading: isLoadingWorkflows } = useWorkflows();
-  const { data: agents = [], isLoading: isLoadingAgents } = useAIAgents();
+  const { data: workflows = [], isLoading: isLoadingWorkflows } = useQuery({
+    queryKey: ["workflows"],
+    queryFn: getWorkflows,
+    ...queryOptions
+  });
+  const { data: agents = [], isLoading: isLoadingAgents } = useQuery({
+    queryKey: ["ai-agents"],
+    queryFn: getAIAgents,
+    ...queryOptions
+  });
 
   // 2. Combine and filter items that have a workflow_id
   const combinedItems = useMemo(() => {
@@ -80,7 +95,7 @@ export default function SchedulesPage() {
       queryKey: ["n8n-workflow", item.workflow_id],
       queryFn: () => getN8NWorkflow(item.workflow_id!),
       enabled: !!item.workflow_id,
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      ...queryOptions
     })),
   });
 
