@@ -34,11 +34,16 @@ export default function DashboardLayout({
               AI Agents
             </Button>
           </Link>
-
           <Link href="/dashboard/schedules">
             <Button variant="ghost" className="w-full justify-start gap-2">
               <FileText className="h-4 w-4" />
               Schedules
+            </Button>
+          </Link>
+          <Link href="/dashboard/activities">
+            <Button variant="ghost" className="w-full justify-start gap-2">
+              <FileText className="h-4 w-4" />
+              Activities
             </Button>
           </Link>
 

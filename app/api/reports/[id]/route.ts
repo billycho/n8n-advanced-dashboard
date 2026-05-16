@@ -3,7 +3,7 @@ import AIAgent from "@/models/AIAgent"; // Ensure AIAgent is registered
 import Report from "@/models/Report";
 import { withAuth } from "@/lib/auth/withAuth";
 
-export const GET = withAuth(async (req: Request, { params }: { params: { id: string } }) => {
+export const GET = withAuth(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   try {
     await connectDB();
 
@@ -17,7 +17,7 @@ export const GET = withAuth(async (req: Request, { params }: { params: { id: str
 
     return Response.json(report);
   } catch (error) {
-    console.error(`Failed to fetch report ${params.id}:`, error);
+    console.error(`Failed to fetch report:`, error);
     return Response.json(
       { error: "Failed to fetch report" },
       { status: 500 }
