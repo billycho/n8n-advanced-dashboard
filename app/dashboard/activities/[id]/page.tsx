@@ -150,7 +150,7 @@ export default function ActivityDetailPage() {
                 {activity.ai_agent && (
                   <Card
                     className="bg-blue-500/5 border-blue-500/10 shadow-none hover:bg-blue-500/10 transition-colors cursor-pointer"
-                    onClick={() => router.push(`/dashboard/ai-agents/${activity.ai_agent._id}`)}
+                    onClick={() => activity.ai_agent?._id && router.push(`/dashboard/ai-agents/${activity.ai_agent._id}`)}
                   >
                     <CardContent className="p-4 flex items-start gap-4">
                       <div className="p-2 bg-blue-500/20 rounded-lg">
@@ -167,7 +167,7 @@ export default function ActivityDetailPage() {
                 {activity.workflow && (
                   <Card
                     className="bg-purple-500/5 border-purple-500/10 shadow-none hover:bg-purple-500/10 transition-colors cursor-pointer"
-                    onClick={() => router.push(`/dashboard/workflows/${activity.workflow._id}`)}
+                    onClick={() => activity.workflow?._id && router.push(`/dashboard/workflows/${activity.workflow._id}`)}
                   >
                     <CardContent className="p-4 flex items-start gap-4">
                       <div className="p-2 bg-purple-500/20 rounded-lg">
