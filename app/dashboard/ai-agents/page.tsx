@@ -6,7 +6,8 @@ import { useAIAgents, useDeleteAIAgent } from "@/features/ai-agents/hooks";
 import type { AIAgent } from "@/features/ai-agents/types";
 import { AddAIAgentDialog } from "@/features/ai-agents/components/add-ai-agent-dialog";
 import { UpdateAIAgentDialog } from "@/features/ai-agents/components/update-ai-agent-dialog";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -29,13 +30,22 @@ export default function AIAgentsPage() {
   const router = useRouter();
   const [editingAgent, setEditingAgent] = useState<AIAgent | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const ITEMS_PER_PAGE = 10;
 
   const { data: agents = [], isLoading } = useAIAgents();
   const { mutate: deleteAgent } = useDeleteAIAgent();
 
-  const totalPages = Math.ceil(agents.length / ITEMS_PER_PAGE);
-  const paginatedAgents = agents.slice(
+  const filteredAgents = agents.filter((agent) => {
+    const search = searchQuery.toLowerCase();
+    return (
+      agent.name.toLowerCase().includes(search) ||
+      (agent.description && agent.description.toLowerCase().includes(search))
+    );
+  });
+
+  const totalPages = Math.ceil(filteredAgents.length / ITEMS_PER_PAGE);
+  const paginatedAgents = filteredAgents.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -68,8 +78,21 @@ export default function AIAgentsPage() {
       </div>
 
       <Card className="shadow-md border-primary/10">
-        <CardHeader>
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <CardTitle>AI Agent List</CardTitle>
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search AI agents..."
+              className="pl-8"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
         </CardHeader>
 
         <CardContent>
@@ -135,23 +158,23 @@ export default function AIAgentsPage() {
                     </TableRow>
                   ))}
 
-                  {agents.length === 0 && (
+                  {filteredAgents.length === 0 && (
                     <TableRow>
                       <TableCell
                         colSpan={3}
                         className="text-center text-muted-foreground py-6"
                       >
-                        No AI agents found. Create one to get started.
+                        {searchQuery ? "No AI agents found matching your search." : "No AI agents found. Create one to get started."}
                       </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
               </Table>
 
-              {agents.length > 0 && (
+              {filteredAgents.length > 0 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between pt-4 mt-4 border-t gap-4">
                   <p className="text-sm text-muted-foreground">
-                    Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, agents.length)} of {agents.length} agents
+                    Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filteredAgents.length)} of {filteredAgents.length} agents
                   </p>
                   <div className="flex items-center gap-2">
                     <Button

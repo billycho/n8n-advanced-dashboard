@@ -6,7 +6,8 @@ import { useWorkflows, useDeleteWorkflow } from "@/features/workflows/hooks";
 import type { Workflow } from "@/features/workflows/types";
 import { AddWorkflowDialog } from "@/features/workflows/components/add-workflow-dialog";
 import { UpdateWorkflowDialog } from "@/features/workflows/components/update-workflow-dialog";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -30,13 +31,22 @@ export default function WorkflowsPage() {
   const router = useRouter();
   const [editingWorkflow, setEditingWorkflow] = useState<Workflow | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const ITEMS_PER_PAGE = 10;
 
   const { data: workflows = [], isLoading } = useWorkflows();
   const { mutate: deleteWorkflow } = useDeleteWorkflow();
 
-  const totalPages = Math.ceil(workflows.length / ITEMS_PER_PAGE);
-  const paginatedWorkflows = workflows.slice(
+  const filteredWorkflows = workflows.filter((workflow) => {
+    const search = searchQuery.toLowerCase();
+    return (
+      workflow.name.toLowerCase().includes(search) ||
+      (workflow.description && workflow.description.toLowerCase().includes(search))
+    );
+  });
+
+  const totalPages = Math.ceil(filteredWorkflows.length / ITEMS_PER_PAGE);
+  const paginatedWorkflows = filteredWorkflows.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -69,8 +79,21 @@ export default function WorkflowsPage() {
       </div>
 
       <Card className="shadow-md border-primary/10">
-        <CardHeader>
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <CardTitle>Workflow List</CardTitle>
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search workflows..."
+              className="pl-8"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
         </CardHeader>
 
         <CardContent>
@@ -161,23 +184,23 @@ export default function WorkflowsPage() {
                     </TableRow>
                   ))}
 
-                  {workflows.length === 0 && (
+                  {filteredWorkflows.length === 0 && (
                     <TableRow>
                       <TableCell
                         colSpan={5}
                         className="text-center text-muted-foreground py-6"
                       >
-                        No workflows found. Create one to get started.
+                        {searchQuery ? "No workflows found matching your search." : "No workflows found. Create one to get started."}
                       </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
               </Table>
 
-              {workflows.length > 0 && (
+              {filteredWorkflows.length > 0 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between pt-4 mt-4 border-t gap-4">
                   <p className="text-sm text-muted-foreground">
-                    Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, workflows.length)} of {workflows.length} workflows
+                    Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filteredWorkflows.length)} of {filteredWorkflows.length} workflows
                   </p>
                   <div className="flex items-center gap-2">
                     <Button
