@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import {
-  ArrowLeft, Calendar, User, FileText, AlertCircle, 
+  ArrowLeft, Calendar, User, FileText, AlertCircle,
   CheckCircle2, AlertTriangle, Hash, Code, Database, Info
 } from "lucide-react";
 import { format } from "date-fns";
@@ -72,9 +72,9 @@ export default function ReportDetailsPage({ params }: { params: Promise<{ report
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <Button 
-            variant="ghost" 
-            onClick={() => router.back()} 
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
             className="gap-2 -ml-2 mb-2 text-muted-foreground hover:text-primary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Reports
@@ -85,7 +85,14 @@ export default function ReportDetailsPage({ params }: { params: Promise<{ report
           </div>
           <p className="text-muted-foreground flex items-center gap-2">
             <User className="h-4 w-4" />
-            Agent: <span className="font-semibold text-foreground">{report.agent?.name}</span>
+            {report.agent ? (
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">AI Agent</Badge>
+            ) : report.workflow ? (
+              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">Workflow</Badge>
+            ) : null}
+            <span className="font-semibold text-foreground ml-1">
+              {report.agent ? report.agent.name : report.workflow?.name}
+            </span>
           </p>
         </div>
 
@@ -176,15 +183,35 @@ export default function ReportDetailsPage({ params }: { params: Promise<{ report
 
               <div className="space-y-1.5">
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                  <User className="h-3 w-3" /> Agent
+                  <User className="h-3 w-3" /> Target
                 </Label>
-                <div 
-                  className="p-3 rounded-lg bg-primary/5 border border-primary/10 cursor-pointer hover:bg-primary/10 transition-colors"
-                  onClick={() => router.push(`/dashboard/ai-agents/${report.agent?._id}`)}
-                >
-                  <p className="font-semibold">{report.agent?.name}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{report.agent?.category} • {report.agent?.environment}</p>
-                </div>
+                {report.agent ? (
+                  <div
+                    className="p-3 rounded-lg bg-primary/5 border border-primary/10 cursor-pointer hover:bg-primary/10 transition-colors"
+                    onClick={() => router.push(`/dashboard/ai-agents/${report.agent?._id}`)}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="font-semibold">{report.agent.name}</p>
+                      <Badge variant="outline" className="text-[10px] h-5 bg-blue-50 text-blue-700 border-blue-200">AI Agent</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground capitalize">{report.agent.category} • {report.agent.environment}</p>
+                  </div>
+                ) : report.workflow ? (
+                  <div
+                    className="p-3 rounded-lg bg-primary/5 border border-primary/10 cursor-pointer hover:bg-primary/10 transition-colors"
+                    onClick={() => router.push(`/dashboard/workflows/${report.workflow?._id}`)}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="font-semibold">{report.workflow.name}</p>
+                      <Badge variant="outline" className="text-[10px] h-5 bg-purple-50 text-purple-700 border-purple-200">Workflow</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground capitalize">Workflow</p>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
+                    <p className="font-semibold text-muted-foreground">Unknown Target</p>
+                  </div>
+                )}
               </div>
 
               <div className="pt-4 border-t border-muted">

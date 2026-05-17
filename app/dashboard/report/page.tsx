@@ -94,7 +94,8 @@ export default function ReportsPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[15%]">Date</TableHead>
-                    <TableHead className="w-[15%]">Agent</TableHead>
+                    <TableHead className="w-[10%]">Type</TableHead>
+                    <TableHead className="w-[15%]">Target</TableHead>
                     <TableHead className="w-[10%]">Status</TableHead>
                     <TableHead className="w-[50%]">Summary</TableHead>
                     {/* <TableHead className="w-[10%] text-right">Actions</TableHead> */}
@@ -116,11 +117,21 @@ export default function ReportsPage() {
                       </TableCell>
 
                       <TableCell>
+                        {report.agent ? (
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">AI Agent</Badge>
+                        ) : report.workflow ? (
+                          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">Workflow</Badge>
+                        ) : (
+                          <Badge variant="outline">Unknown</Badge>
+                        )}
+                      </TableCell>
+
+                      <TableCell>
                         <div className="font-semibold truncate max-w-[150px]">
-                          {report.agent?.name || "Unknown Agent"}
+                          {report.agent ? report.agent.name : report.workflow ? report.workflow.name : "Unknown Target"}
                         </div>
                         <div className="text-xs text-muted-foreground truncate max-w-[150px]">
-                          {report.agent?.category}
+                          {report.agent ? report.agent.category : report.workflow ? "Workflow" : ""}
                         </div>
                       </TableCell>
 

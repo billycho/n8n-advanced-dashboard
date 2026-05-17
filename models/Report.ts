@@ -1,12 +1,18 @@
 import mongoose from "mongoose";
 import "@/models/AIAgent"; // ✅ must exist somewhere
+import "@/models/Workflow";
 
 const ReportSchema = new mongoose.Schema(
   {
     agent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "AIAgent",
-      required: true,
+      required: false,
+    },
+    workflow: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Workflow",
+      required: false,
     },
     report_date: {
       type: Date,
