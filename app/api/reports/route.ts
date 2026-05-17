@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import AIAgent from "@/models/AIAgent"; // Ensure AIAgent is registered
+import Workflow from "@/models/Workflow"; // Ensure Workflow is registered
 import Report from "@/models/Report";
 import { withAuth } from "@/lib/auth/withAuth";
 
@@ -15,6 +16,7 @@ export const GET = withAuth(async (req: Request) => {
 
     const reports = await Report.find(query)
       .populate("agent", "name description category environment")
+      .populate("workflow", "name description triggerType environment")
       .sort({ report_date: -1 });
 
     return Response.json(reports);

@@ -9,7 +9,7 @@ export const GET = withAuth(async (req: Request, { params }: { params: Promise<{
 
     const { id } = await params;
 
-    const report = await Report.findById(id).populate("agent");
+    const report = await Report.findById(id).populate("agent").populate("workflow");
 
     if (!report) {
       return Response.json({ error: "Report not found" }, { status: 404 });
