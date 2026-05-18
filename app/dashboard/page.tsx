@@ -1,23 +1,27 @@
 "use client";
 
 import { useAIAgents } from "@/features/ai-agents/hooks";
+import { useWorkflows } from "@/features/workflows/hooks";
 import { useReports } from "@/features/reports/hooks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { isToday, isThisWeek, parseISO } from "date-fns";
-import { Bot, Activity, FileText, CalendarDays } from "lucide-react";
+import { Bot, Activity, FileText, CalendarDays, Zap } from "lucide-react";
 
 export default function DashboardPage() {
   const { data: agents, isLoading: isAgentsLoading } = useAIAgents();
+  const { data: workflows, isLoading: isWorkflowsLoading } = useWorkflows();
   const { data: reports, isLoading: isReportsLoading } = useReports();
 
-  const isLoading = isAgentsLoading || isReportsLoading;
+  const isLoading = isAgentsLoading || isReportsLoading || isWorkflowsLoading;
 
   // Compute Metrics
   const totalAgents = agents?.length || 0;
   // Assume 'prod' environment means 'Active' for overview purposes
   const activeAgents = agents?.filter((a) => a.environment === "prod").length || 0;
+
+  const activeWorkflows = workflows?.filter((w) => w.environment === "prod").length || 0;
 
   const todayReports = reports?.filter((r) => {
     try {
@@ -40,7 +44,17 @@ export default function DashboardPage() {
     .sort((a, b) => new Date((b as any).createdAt || 0).getTime() - new Date((a as any).createdAt || 0).getTime())
     .slice(0, 5);
 
-  const latestReports = [...(reports || [])]
+  const latestWorkflows = [...(workflows || [])]
+    .sort((a, b) => new Date((b as any).createdAt || 0).getTime() - new Date((a as any).createdAt || 0).getTime())
+    .slice(0, 5);
+
+  const latestAgentReports = [...(reports || [])]
+    .filter((r) => r.agent)
+    .sort((a, b) => new Date(b.report_date || (b as any).createdAt || 0).getTime() - new Date(a.report_date || (a as any).createdAt || 0).getTime())
+    .slice(0, 5);
+
+  const latestWorkflowReports = [...(reports || [])]
+    .filter((r) => r.workflow)
     .sort((a, b) => new Date(b.report_date || (b as any).createdAt || 0).getTime() - new Date(a.report_date || (a as any).createdAt || 0).getTime())
     .slice(0, 5);
 
@@ -57,7 +71,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Dashboard Overview</h1>
-          <p className="text-muted-foreground">High-level metrics for your AI Agents and Reports</p>
+          <p className="text-muted-foreground">High-level metrics for your Workflows, AI Agents and Reports</p>
         </div>
       </div>
 
@@ -70,18 +84,18 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeAgents}</div>
-            <p className="text-xs text-muted-foreground mt-1">Agents in production</p>
+            <p className="text-xs text-muted-foreground mt-1">AI Agents in production</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total AI Agents</CardTitle>
-            <Bot className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Active Workflows</CardTitle>
+            <Zap className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalAgents}</div>
-            <p className="text-xs text-muted-foreground mt-1">Across all environments</p>
+            <div className="text-2xl font-bold">{activeWorkflows}</div>
+            <p className="text-xs text-muted-foreground mt-1">Workflows in production</p>
           </CardContent>
         </Card>
 
@@ -154,7 +168,7 @@ export default function DashboardPage() {
         {/* Latest Reports */}
         <Card className="col-span-1 shadow-md border-primary/10">
           <CardHeader>
-            <CardTitle>Latest Reports</CardTitle>
+            <CardTitle>Latest AI Agent Reports</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -166,21 +180,123 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {latestReports.length > 0 ? (
-                  latestReports.map((report) => (
+                {latestAgentReports.length > 0 ? (
+                  latestAgentReports.map((report) => (
                     <TableRow key={report._id}>
                       <TableCell className="font-medium truncate max-w-[150px]">
                         {report.agent?.name || "Unknown Agent"}
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={
-                            report.report_status === "success" 
-                              ? "default" 
-                              : report.report_status === "failed" 
-                                ? "destructive" 
+                            report.report_status === "success"
+                              ? "default"
+                              : report.report_status === "failed"
+                                ? "destructive"
                                 : "outline"
-                          } 
+                          }
+                          className={report.report_status === "success" ? "bg-green-500 hover:bg-green-600" : ""}
+                        >
+                          {report.report_status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right text-sm text-muted-foreground">
+                        {new Date(report.report_date).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
+                      No reports found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Workflow Tables Section */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Latest Workflows */}
+        <Card className="col-span-1 shadow-md border-primary/10">
+          <CardHeader>
+            <CardTitle>Latest Workflows</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Trigger</TableHead>
+                  <TableHead>Environment</TableHead>
+                  <TableHead className="text-right">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {latestWorkflows.length > 0 ? (
+                  latestWorkflows.map((workflow) => (
+                    <TableRow key={workflow._id}>
+                      <TableCell className="font-medium">{workflow.name}</TableCell>
+                      <TableCell className="capitalize text-muted-foreground">
+                        {workflow.triggerType || "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={workflow.environment === "prod" ? "default" : "secondary"} className="capitalize">
+                          {workflow.environment || "dev"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Badge variant={workflow.active ? "default" : "secondary"} className="capitalize">
+                          {workflow.active ? "Active" : "Inactive"}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
+                      No Workflows found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        {/* Latest Workflow Reports */}
+        <Card className="col-span-1 shadow-md border-primary/10">
+          <CardHeader>
+            <CardTitle>Latest Workflow Reports</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Workflow</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {latestWorkflowReports.length > 0 ? (
+                  latestWorkflowReports.map((report) => (
+                    <TableRow key={report._id}>
+                      <TableCell className="font-medium truncate max-w-[150px]">
+                        {report.workflow?.name || "Unknown Workflow"}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            report.report_status === "success"
+                              ? "default"
+                              : report.report_status === "failed"
+                                ? "destructive"
+                                : "outline"
+                          }
                           className={report.report_status === "success" ? "bg-green-500 hover:bg-green-600" : ""}
                         >
                           {report.report_status}
