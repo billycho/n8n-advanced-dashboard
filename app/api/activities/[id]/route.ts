@@ -1,11 +1,12 @@
 import { connectDB } from "@/lib/mongodb";
 import Activity from "@/models/Activity";
+import UserWorkflowPermission from "@/models/UserWorkflowPermission";
 import "@/models/AIAgent";
 import "@/models/Workflow";
 import { withAuth } from "@/lib/auth/withAuth";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = withAuth(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const GET = withAuth(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }, session: any) => {
   try {
     await connectDB();
     const { id } = await params;
@@ -16,6 +17,19 @@ export const GET = withAuth(async (req: NextRequest, { params }: { params: Promi
 
     if (!activity) {
       return NextResponse.json({ error: "Activity not found" }, { status: 404 });
+    }
+
+    if (session?.user?.role === "client") {
+      const hasPermission = await UserWorkflowPermission.findOne({
+        user: session.user.id,
+        $or: [
+          { ai_agent: activity.ai_agent?._id },
+          { workflow: activity.workflow?._id }
+        ]
+      });
+      if (!hasPermission) {
+        return NextResponse.json({ error: "Unauthorized access to this activity" }, { status: 403 });
+      }
     }
 
     return NextResponse.json(activity);

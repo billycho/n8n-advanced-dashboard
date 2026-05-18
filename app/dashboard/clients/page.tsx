@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useClients, useDeleteClient } from "@/features/clients/hooks";
 import type { Client } from "@/features/clients/types";
@@ -9,6 +9,7 @@ import { UpdateClientDialog } from "@/features/clients/components/update-client-
 import { Eye, Pencil, Trash2, Search, Mail, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useSession } from "@/lib/auth/auth-client";
 
 import {
   Table,
@@ -28,6 +29,7 @@ import {
 
 export default function ClientsPage() {
   const router = useRouter();
+  const { data: session, isPending: isSessionPending } = useSession();
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -35,6 +37,20 @@ export default function ClientsPage() {
 
   const { data: clients = [], isLoading } = useClients();
   const { mutate: deleteClient } = useDeleteClient();
+
+  useEffect(() => {
+    if (!isSessionPending && session?.user?.role === "client") {
+      router.push("/dashboard");
+    }
+  }, [session, isSessionPending, router]);
+
+  if (isSessionPending || session?.user?.role === "client") {
+    return (
+      <div className="flex items-center justify-center h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   const filteredClients = clients.filter((client) => {
     const search = searchQuery.toLowerCase();

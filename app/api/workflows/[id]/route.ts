@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import Workflow from "@/models/Workflow";
+import UserWorkflowPermission from "@/models/UserWorkflowPermission";
 import { withAuth } from "@/lib/auth/withAuth";
 
 // GET single workflow
@@ -13,6 +14,17 @@ export const GET = withAuth(
       await connectDB();
 
       const { id } = await params;
+
+      if (session?.user?.role === "client") {
+        const hasPermission = await UserWorkflowPermission.findOne({
+          user: session.user.id,
+          workflow: id
+        });
+        if (!hasPermission) {
+          return Response.json({ error: "Unauthorized access to this Workflow" }, { status: 403 });
+        }
+      }
+
       const workflow = await Workflow.findById(id);
 
       if (!workflow) {
@@ -38,6 +50,10 @@ export const PUT = withAuth(
   ) => {
     try {
       await connectDB();
+
+      if (session?.user?.role === "client") {
+        return Response.json({ error: "Unauthorized: Clients cannot modify Workflows" }, { status: 403 });
+      }
 
       const { id } = await params;
       const body = await req.json();
@@ -73,6 +89,10 @@ export const DELETE = withAuth(
   ) => {
     try {
       await connectDB();
+
+      if (session?.user?.role === "client") {
+        return Response.json({ error: "Unauthorized: Clients cannot delete Workflows" }, { status: 403 });
+      }
 
       const { id } = await params;
 

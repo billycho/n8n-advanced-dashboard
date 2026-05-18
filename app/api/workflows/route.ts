@@ -1,12 +1,25 @@
 import { connectDB } from "@/lib/mongodb";
 import Workflow from "@/models/Workflow";
+import UserWorkflowPermission from "@/models/UserWorkflowPermission";
 import { withAuth } from "@/lib/auth/withAuth";
 
 // GET all workflows
 export const GET = withAuth(async (req: Request, context: any, session: any) => {
   await connectDB();
 
-  const workflows = await Workflow.find();
+  let filter = {};
+
+  if (session?.user?.role === "client") {
+    const permissions = await UserWorkflowPermission.find({
+      user: session.user.id,
+      workflow: { $exists: true, $ne: null }
+    });
+    
+    const assignedWorkflowIds = permissions.map(p => p.workflow);
+    filter = { _id: { $in: assignedWorkflowIds } };
+  }
+
+  const workflows = await Workflow.find(filter);
 
   return Response.json(workflows);
 });
