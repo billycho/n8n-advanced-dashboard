@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import AIAgent from "@/models/AIAgent";
+import UserWorkflowPermission from "@/models/UserWorkflowPermission";
 import { withAuth } from "@/lib/auth/withAuth";
 
 // GET single agent
@@ -13,6 +14,17 @@ export const GET = withAuth(
       await connectDB();
 
       const { id } = await params;
+
+      if (session?.user?.role === "client") {
+        const hasPermission = await UserWorkflowPermission.findOne({
+          user: session.user.id,
+          ai_agent: id
+        });
+        if (!hasPermission) {
+          return Response.json({ error: "Unauthorized access to this AI Agent" }, { status: 403 });
+        }
+      }
+
       const agent = await AIAgent.findById(id);
 
       if (!agent) {
@@ -38,6 +50,10 @@ export const PUT = withAuth(
   ) => {
     try {
       await connectDB();
+
+      if (session?.user?.role === "client") {
+        return Response.json({ error: "Unauthorized: Clients cannot modify AI Agents" }, { status: 403 });
+      }
 
       const { id } = await params;
       const body = await req.json();
@@ -73,6 +89,10 @@ export const DELETE = withAuth(
   ) => {
     try {
       await connectDB();
+
+      if (session?.user?.role === "client") {
+        return Response.json({ error: "Unauthorized: Clients cannot delete AI Agents" }, { status: 403 });
+      }
 
       const { id } = await params;
 

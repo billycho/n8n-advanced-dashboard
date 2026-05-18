@@ -1,12 +1,25 @@
 import { connectDB } from "@/lib/mongodb";
 import AIAgent from "@/models/AIAgent";
+import UserWorkflowPermission from "@/models/UserWorkflowPermission";
 import { withAuth } from "@/lib/auth/withAuth";
 
 // GET all agents
 export const GET = withAuth(async (req: Request, context: any, session: any) => {
   await connectDB();
 
-  const agents = await AIAgent.find();
+  let filter = {};
+
+  if (session?.user?.role === "client") {
+    const permissions = await UserWorkflowPermission.find({
+      user: session.user.id,
+      ai_agent: { $exists: true, $ne: null }
+    });
+
+    const assignedAgentIds = permissions.map(p => p.ai_agent);
+    filter = { _id: { $in: assignedAgentIds } };
+  }
+
+  const agents = await AIAgent.find(filter);
 
   return Response.json(agents);
 });
