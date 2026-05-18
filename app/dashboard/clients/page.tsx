@@ -39,12 +39,12 @@ export default function ClientsPage() {
   const { mutate: deleteClient } = useDeleteClient();
 
   useEffect(() => {
-    if (!isSessionPending && session?.user?.role === "client") {
+    if (!isSessionPending && (session?.user as any)?.role === "client") {
       router.push("/dashboard");
     }
   }, [session, isSessionPending, router]);
 
-  if (isSessionPending || session?.user?.role === "client") {
+  if (isSessionPending || (session?.user as any)?.role === "client") {
     return (
       <div className="flex items-center justify-center h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -174,7 +174,7 @@ export default function ClientsPage() {
                           >
                             <Pencil className="h-4 w-4 text-green-500" />
                           </Button>
-                          
+
                           <Button
                             variant="ghost"
                             size="icon"
