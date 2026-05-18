@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Home, Users, BarChart3, Settings, FileText, Workflow, Activity, FileBarChart } from "lucide-react"
+import { Home, Users, BarChart3, Settings, FileText, Workflow, Activity, FileBarChart, UserCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import SignOutButton from "@/components/sign-out-btn"
 
@@ -32,6 +32,12 @@ export default function DashboardLayout({
             <Button variant="ghost" className="w-full justify-start gap-2">
               <Users className="h-4 w-4" />
               AI Agents
+            </Button>
+          </Link>
+          <Link href="/dashboard/clients">
+            <Button variant="ghost" className="w-full justify-start gap-2">
+              <UserCircle className="h-4 w-4" />
+              Clients
             </Button>
           </Link>
           <Link href="/dashboard/schedules">
