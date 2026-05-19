@@ -1,8 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<h1 align="center">n8n Advance Dashboard</h1>
+
+<div align="center">An advanced n8n dashboard to manage workflows and AI agents, view reports, track activities, and monitor schedules. Built with Next.js, shadcn/ui, Tailwind CSS, and TypeScript.</div>
+
+<br />
+
+<div align="center">
+  <img src="/public/n8n-advanced-dashboard.png" alt="AI Agents Dashboard Cover" style="max-width: 100%; border-radius: 8px;" />
+</div>
+
+<br />
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-black" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TypeScript-blue" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/shadcn%2Fui-black" alt="shadcn/ui" />
+</p>
+
+## Overview
+
+This project is an **advanced n8n dashboard** that provides a centralized interface to manage your automation ecosystem. It allows users to seamlessly manage n8n workflows and AI agents, as well as view comprehensive reports, track execution activities, and monitor schedules.
+
+Built with **Next.js, Shadcn UI, TypeScript, Tailwind CSS**, and deeply integrated with **n8n and MongoDB**, it serves as a powerful control panel for admins and clients alike.
+
+### Tech Stack
+
+This project uses the following stack:
+
+- Framework - [Next.js](https://nextjs.org)
+- Language - [TypeScript](https://www.typescriptlang.org)
+- Styling - [Tailwind CSS](https://tailwindcss.com)
+- Components - [Shadcn-ui](https://ui.shadcn.com)
+- Database - [MongoDB / Mongoose](https://mongoosejs.com/)
+- Workflow Automation - [n8n](https://n8n.io/)
+- Data Fetching - [TanStack React Query](https://tanstack.com/query)
+
+## Features
+
+- 📊 **Dashboard Overview** showing active workflows, AI agents, and recent metrics.
+- 👥 **Client Management** where admins can manage clients and assign workflows to them.
+- 🧑‍💻 **Client Mode** where clients can manage workflows and AI agents assigned by an admin.
+- 🤖 **AI Agents Management** for configuring and managing intelligent agents.
+- ⚙️ **Workflow Management** integrating with n8n APIs (activate/deactivate, search, scheduling).
+- 📋 **Activity Tracking** to monitor detailed workflow executions and view raw JSON logs.
+- 📅 **Schedules Dashboard** for visualizing all n8n workflows and AI agent schedules.
+- 📈 **Dynamic Reporting** supporting both AI Agents and Workflows as data sources.
+- 🧩 **Shadcn UI components** with Tailwind CSS styling.
+
+## Pages
+
+| Pages | Specifications |
+| :--- | :--- |
+| **Dashboard Overview** | Analytics overview for active workflows and AI agents, featuring status summary and quick links. |
+| **AI Agents** | Management interface to configure, list, and modify AI Agents. |
+| **Workflows** | Interactive data tables to manage workflow states, with features like activate/deactivate, search, and form URL integrations. |
+| **Activities** | Detailed activity tracking system displaying raw execution data and JSON logs for workflows. |
+| **Schedules** | Centralized view of all automated tasks, showing active statuses and cron expressions. |
+| **Reports** | Consolidated reporting system displaying performance metrics and details for both AI Agents and Workflows. |
+| **Settings** | Configuration and preferences. |
+
+## Feature based organization
+
+```plaintext
+src/
+├── app/                           # Next.js App Router directory
+│   ├── dashboard/                 # Dashboard route group
+│   │   ├── overview/              # Analytics
+│   │   ├── agents/                # AI Agents management
+│   │   ├── workflows/             # Workflow tables and forms
+│   │   ├── activities/            # Execution logs and detail views
+│   │   ├── schedules/             # Cron expressions and active schedules
+│   │   ├── reports/               # System reports
+│   │   └── settings/              # Settings
+│   └── api/                       # API routes (Mongoose, n8n proxy)
+│       └── n8n/                   # Proxy endpoints for n8n API
+│
+├── components/                    # Shared components
+│   ├── ui/                        # UI primitives (buttons, inputs, etc.)
+│   └── layout/                    # Layout components (header, sidebar, etc.)
+│
+├── lib/                           # Core utilities
+└── types/                         # TypeScript types
+```
 
 ## Getting Started
 
-First, run the development server:
+> [!NOTE]  
+> This admin dashboard uses **Next.js (App Router)** and **Shadcn UI**. Follow these steps to run it locally:
+
+Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+- Create a `.env.local` file by copying the example environment file:
+  `cp .env.example .env.local`
+- Add the required environment variables to the `.env.local` file, specifically your MongoDB URI and `NEXT_PUBLIC_N8N_URL` / `X-N8N-API-KEY`.
+- Start the development server:
 
 ```bash
 npm run dev
@@ -10,27 +109,16 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+You should now be able to access the application at http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project can be easily deployed to Vercel or any Next.js-compatible hosting platform. 
 
-## Learn More
+For Docker deployments, refer to the standard Next.js standalone output mode approach.
 
-To learn more about Next.js, take a look at the following resources:
+### ⭐ Support
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+If you find this project helpful, please consider giving it a star ⭐!
