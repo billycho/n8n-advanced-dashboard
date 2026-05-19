@@ -15,12 +15,14 @@ export default function SettingsPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (session?.user) {
       setName(session.user.name || "");
       setEmail(session.user.email || "");
+      setRole((session.user as any).role || "");
     }
   }, [session?.user]);
 
@@ -100,6 +102,17 @@ export default function SettingsPage() {
               disabled
             />
             <p className="text-[10px] text-muted-foreground italic">Email address cannot be changed.</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="role">Role</Label>
+            <Input
+              id="role"
+              value={role}
+              placeholder="Your role"
+              disabled
+            />
+            <p className="text-[10px] text-muted-foreground italic">Role cannot be changed.</p>
           </div>
 
           <div className="space-y-2">
