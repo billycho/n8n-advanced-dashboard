@@ -5,7 +5,7 @@
 <br />
 
 <div align="center">
-  <img src="/public/n8n-advanced-dashboard.png" alt="AI Agents Dashboard Cover" style="max-width: 100%; border-radius: 8px;" />
+  <img src="/public/n8n-advanced-dashboard-light.png" alt="AI Agents Dashboard Cover" style="max-width: 100%; border-radius: 8px;" />
 </div>
 
 <br />
@@ -38,13 +38,13 @@ This project uses the following stack:
 ## Features
 
 - 📊 **Dashboard Overview** showing active workflows, AI agents, and recent metrics.
-- 👥 **Client Management** where admins can manage clients and assign workflows to them.
-- 🧑‍💻 **Client Mode** where clients can manage workflows and AI agents assigned by an admin.
-- 🤖 **AI Agents Management** for configuring and managing intelligent agents.
 - ⚙️ **Workflow Management** integrating with n8n APIs (activate/deactivate, search, scheduling).
+- 🤖 **AI Agents Management** for configuring and managing intelligent agents.
 - 📋 **Activity Tracking** to monitor detailed workflow executions and view raw JSON logs.
 - 📅 **Schedules Dashboard** for visualizing all n8n workflows and AI agent schedules.
 - 📈 **Dynamic Reporting** supporting both AI Agents and Workflows as data sources.
+- 👥 **Client Management** where admins can manage clients and assign workflows to them.
+- 🧑‍💻 **Client Mode** where clients can manage workflows and AI agents assigned by an admin.
 - 🧩 **Shadcn UI components** with Tailwind CSS styling.
 
 ## Pages
@@ -52,11 +52,12 @@ This project uses the following stack:
 | Pages | Specifications |
 | :--- | :--- |
 | **Dashboard Overview** | Analytics overview for active workflows and AI agents, featuring status summary and quick links. |
-| **AI Agents** | Management interface to configure, list, and modify AI Agents. |
 | **Workflows** | Interactive data tables to manage workflow states, with features like activate/deactivate, search, and form URL integrations. |
+| **AI Agents** | Management interface to configure, list, and modify AI Agents. |
 | **Activities** | Detailed activity tracking system displaying raw execution data and JSON logs for workflows. |
 | **Schedules** | Centralized view of all automated tasks, showing active statuses and cron expressions. |
 | **Reports** | Consolidated reporting system displaying performance metrics and details for both AI Agents and Workflows. |
+| **Clients** | Management interface for admins to oversee clients and assign workflows, as well as the client mode view. |
 | **Settings** | Configuration and preferences. |
 
 ## Feature based organization
@@ -71,6 +72,7 @@ src/
 │   │   ├── activities/            # Execution logs and detail views
 │   │   ├── schedules/             # Cron expressions and active schedules
 │   │   ├── reports/               # System reports
+│   │   ├── clients/               # Client management and client mode
 │   │   └── settings/              # Settings
 │   └── api/                       # API routes (Mongoose, n8n proxy)
 │       └── n8n/                   # Proxy endpoints for n8n API
