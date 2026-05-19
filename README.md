@@ -5,7 +5,7 @@
 <br />
 
 <div align="center">
-  <img src="/public/n8n-advanced-dashboard-light.png" alt="AI Agents Dashboard Cover" style="max-width: 100%; border-radius: 8px;" />
+  <img src="/public/n8n-advanced-dashboard-light.png" alt="n8n Advanced Dashboard Cover" style="max-width: 100%; border-radius: 8px;" />
 </div>
 
 <br />
@@ -45,7 +45,7 @@ This project uses the following stack:
 - 📈 **Dynamic Reporting** supporting both AI Agents and Workflows as data sources.
 - 👥 **Client Management** where admins can manage clients and assign workflows to them.
 - 🧑‍💻 **Client Mode** where clients can manage workflows and AI agents assigned by an admin.
-- 🧩 **Shadcn UI components** with Tailwind CSS styling.
+- 🧩 **Shadcn UI components** with Tailwind CSS styling and full support for both light and dark modes.
 
 ## Pages
 
